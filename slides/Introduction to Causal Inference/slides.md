@@ -1,637 +1,1069 @@
 ---
-# try also 'default' to start simple
-theme: seriph
-# random image from a curated Unsplash collection by Anthony
-# like them? see https://unsplash.com/collections/94734566/slidev
-background: https://cover.sli.dev
-# some information about your slides (markdown enabled)
-title: Welcome to Slidev
-info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
-# apply UnoCSS classes to the current slide
+theme: default
+background: https://source.unsplash.com/collection/94734566/1920x1080
 class: text-center
-# https://sli.dev/features/drawing
+highlighter: shiki
+lineNumbers: false
+info: |
+  ## Introduction to Causal Inference
+  SciPy 2026 Tutorial
 drawings:
   persist: false
-# slide transition: https://sli.dev/guide/animations.html#slide-transitions
 transition: slide-left
-# enable MDC Syntax: https://sli.dev/features/mdc
-mdc: true
-# duration of the presentation
-duration: 35min
+title: Introduction to Causal Inference
 ---
 
-# Welcome to Slidev
+# Introduction to Causal Inference
 
-Presentation slides for developers
+SciPy 2026
 
-<div @click="$slidev.nav.next" class="mt-12 py-1" hover:bg="white op-10">
-  Press Space for next page <carbon:arrow-right />
+**Roni Kobrosly Ph.D.**
+
+<div class="pt-12">
+  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
+    Press Space to begin <carbon:arrow-right class="inline"/>
+  </span>
 </div>
 
-<div class="abs-br m-6 text-xl">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="slidev-icon-btn">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" class="slidev-icon-btn">
-    <carbon:logo-github />
-  </a>
-</div>
-
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
-
----
-transition: fade-out
 ---
 
-# What is Slidev?
+# Learning Objectives
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+By the end of this tutorial, you should be able to:
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - themes can be shared and re-used as npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embed Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-<br>
-<br>
-
-Read more about [Why Slidev?](https://sli.dev/guide/why)
-
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/features/slide-scope-style
--->
-
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
-
-<!--
-Here is another comment.
--->
-
----
-transition: slide-up
-level: 2
----
-
-# Navigation
-
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/ui#navigation-bar)
-
-## Keyboard Shortcuts
-
-|                                                     |                             |
-| --------------------------------------------------- | --------------------------- |
-| <kbd>right</kbd> / <kbd>space</kbd>                 | next animation or slide     |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd>                                       | previous slide              |
-| <kbd>down</kbd>                                     | next slide                  |
-
-<!-- https://sli.dev/guide/animations.html#click-animation -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-  alt=""
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
+- Understand the pitfalls of observational data analysis
+- Know the various types of causal relationships to look out for
+- Describe the hierarchy of statistical analyses, causal inference, and experiments
+- Start conducting preliminary causal analyses on your own data
+- Confidently explore the topic on your own (now that you have a solid foundational understanding of causal thinking)
 
 ---
 layout: two-cols
-layoutClass: gap-16
 ---
 
-# Table of contents
+# Hotel Prices Example
 
-You can use the `Toc` component to generate a table of contents for your slides:
+## As a Vacationer 🏖️
 
-```html
-<Toc minDepth="1" maxDepth="1" />
-```
-
-The title will be inferred from your slide content, or you can override it with `title` and `level` in your frontmatter.
+Looking to avoid a crowded hotel: this plot is good enough 👍
 
 ::right::
 
-<Toc text-sm minDepth="1" maxDepth="2" />
+## As a Hotel Owner 🏨
 
----
-layout: image-right
-image: https://cover.sli.dev
----
+Trying to optimize your pricing: this plot is useless…
 
-# Code
+<div class="text-center mt-8">
 
-Use code snippets and get the highlighting directly, and even types hover!
+**Correlation ≠ Causation**
 
-```ts [filename-example.ts] {all|4|6|6-7|9|all} twoslash
-// TwoSlash enables TypeScript hover information
-// and errors in markdown code blocks
-// More at https://shiki.style/packages/twoslash
-import { computed, ref } from 'vue'
-
-const count = ref(0)
-const doubled = computed(() => count.value * 2)
-
-doubled.value = 2
-```
-
-<arrow v-click="[4, 5]" x1="350" y1="310" x2="195" y2="342" color="#953" width="2" arrowSize="1" />
-
-<!-- This allow you to embed external code blocks -->
-<<< @/snippets/external.ts#snippet
-
-<!-- Footer -->
-
-[Learn more](https://sli.dev/features/line-highlighting)
-
-<!-- Inline style -->
-<style>
-.footnotes-sep {
-  @apply mt-5 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
-<!--
-Notes can also sync with clicks
-
-[click] This will be highlighted after the first click
-
-[click] Highlighted with `count = ref(0)`
-
-[click:3] Last click (skip two clicks)
--->
-
----
-level: 2
----
-
-# Shiki Magic Move
-
-Powered by [shiki-magic-move](https://shiki-magic-move.netlify.app/), Slidev supports animations across multiple code snippets.
-
-Add multiple code blocks and wrap them with <code>````md magic-move</code> (four backticks) to enable the magic move. For example:
-
-````md magic-move {lines: true}
-```ts {*|2|*}
-// step 1
-const author = reactive({
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-})
-```
-
-```ts {*|1-2|3-4|3-4,8}
-// step 2
-export default {
-  data() {
-    return {
-      author: {
-        name: 'John Doe',
-        books: [
-          'Vue 2 - Advanced Guide',
-          'Vue 3 - Basic Guide',
-          'Vue 4 - The Mystery'
-        ]
-      }
-    }
-  }
-}
-```
-
-```ts
-// step 3
-export default {
-  data: () => ({
-    author: {
-      name: 'John Doe',
-      books: [
-        'Vue 2 - Advanced Guide',
-        'Vue 3 - Basic Guide',
-        'Vue 4 - The Mystery'
-      ]
-    }
-  })
-}
-```
-
-Non-code blocks are ignored.
-
-```vue
-<!-- step 4 -->
-<script setup>
-const author = {
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-}
-</script>
-```
-````
+</div>
 
 ---
 
-# Components
+# The Radium Clock Question
 
-<div grid="~ cols-2 gap-4">
+<div class="text-4xl text-center my-20">
+
+Does exposure to this radium clock cause cancer?
+
+</div>
+
+---
+
+# Alternative Universes
+
+<div class="grid grid-cols-2 gap-4">
+
 <div>
 
-You can use Vue components directly inside your slides.
+### Our Observed Reality
+**Early 1980**
 
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
-```
-
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
+1. Starts sleeping near clock
+2. Develops cancer 🏥
 
 </div>
+
 <div>
 
-```html
-<Tweet id="1390115482657726468" />
-```
+### An Alternative Reality
+**Early 1980**
 
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
-
-<!--
-Presenter note with **bold**, *italic*, and ~~striked~~ text.
-
-Also, HTML elements are valid:
-<div class="flex w-full">
-  <span style="flex-grow: 1;">Left content</span>
-  <span>Right content</span>
-</div>
--->
-
----
-class: px-20
----
-
-# Themes
-
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="t-2">
-
-```yaml
----
-theme: default
----
-```
-
-```yaml
----
-theme: seriph
----
-```
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true" alt="">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true" alt="">
+1. Throws out clock upon discovery
+2. Does not develop cancer 😄
 
 </div>
 
-Read more about [How to use a theme](https://sli.dev/guide/theme-addon#use-theme) and
-check out the [Awesome Themes Gallery](https://sli.dev/resources/theme-gallery).
-
----
-
-# Clicks Animations
-
-You can add `v-click` to elements to add a click animation.
-
-<div v-click>
-
-This shows up when you click the slide:
-
-```html
-<div v-click>This shows up when you click the slide.</div>
-```
-
 </div>
 
-<br>
+<div class="text-center mt-8 text-xl">
 
-<v-click>
-
-The <span v-mark.red="3"><code>v-mark</code> directive</span>
-also allows you to add
-<span v-mark.circle.orange="4">inline marks</span>
-, powered by [Rough Notation](https://roughnotation.com/):
-
-```html
-<span v-mark.underline.orange>inline markers</span>
-```
-
-</v-click>
-
-<div mt-20 v-click>
-
-[Learn more](https://sli.dev/guide/animations#click-animation)
+This is the essence of **counterfactual thinking**
 
 </div>
 
 ---
 
-# Motions
+# Counterfactuals
 
-Motion animations are powered by [@vueuse/motion](https://motion.vueuse.org/), triggered by `v-motion` directive.
+## "Counter to fact"
 
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }"
-  :click-3="{ x: 80 }"
-  :leave="{ x: 1000 }"
->
-  Slidev
-</div>
-```
+You can also think of counterfactuals as a **missing data problem**
 
-<div class="w-60 relative">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-square.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-circle.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-triangle.png"
-      alt=""
-    />
-  </div>
+| ID# | special offer | age | device  | churn? |
+|-----|---------------|-----|---------|--------|
+| 1   | Y             | 40  | iphone  | Y      |
+| 2   | Y             | 35  | android | N      |
+| 3   | N             | 77  | iphone  | N      |
+| 4   | Y             | 18  | android | N      |
 
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
+---
+
+# The Missing Data Problem
+
+| ID# | Observed? | special offer | age | device  | churn? |
+|-----|-----------|---------------|-----|---------|--------|
+| 1   | ✓         | Y             | 40  | iphone  | Y      |
+| 1   | ✗         | N             | 40  | iphone  | ???    |
+| 2   | ✓         | Y             | 35  | android | N      |
+| 2   | ✗         | N             | 35  | android | ???    |
+| 3   | ✗         | Y             | 77  | iphone  | ???    |
+| 3   | ✓         | N             | 77  | iphone  | N      |
+| 4   | ✓         | Y             | 18  | android | N      |
+| 4   | ✗         | N             | 18  | android | ???    |
+
+<div class="text-center text-red-500 font-bold mt-4">
+We can never observe both outcomes for the same unit!
 </div>
 
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
+---
 
-<div
-  v-motion
-  :initial="{ x:35, y: 30, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
+# Experiments (Randomized Controlled Trials)
 
-[Learn more](https://sli.dev/guide/animations.html#motion)
+## Also known as A/B Tests
+
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div class="text-center">
+
+### Treatment Group
+Shown special offer upon canceling service
+
+</div>
+
+<div class="text-center">
+
+### Control Group
+Not shown special offer upon canceling service
+
+</div>
+
+</div>
+
+<div class="text-center mt-12">
+
+**Compare outcomes between the two groups**
 
 </div>
 
 ---
 
-# $\LaTeX$
+# When Experiments Aren't Feasible
 
-$\LaTeX$ is supported out-of-box. Powered by [$\KaTeX$](https://katex.org/).
+Examples:
 
-<div h-3 />
+- Understanding how a user's behavior changes when they switch from an iPhone to the newest Samsung phone
+- Too few units, such as in a Merger and Acquisition scenario (there is one event that may or may not happen)
+- Modify household incomes in neighborhoods, to see if reducing a neighborhood's income inequality reduces the local crime rate
 
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$ {1|3|all}
-\begin{aligned}
-\nabla \cdot \vec{E} &= \frac{\rho}{\varepsilon_0} \\
-\nabla \cdot \vec{B} &= 0 \\
-\nabla \times \vec{E} &= -\frac{\partial\vec{B}}{\partial t} \\
-\nabla \times \vec{B} &= \mu_0\vec{J} + \mu_0\varepsilon_0\frac{\partial\vec{E}}{\partial t}
-\end{aligned}
-$$
-
-[Learn more](https://sli.dev/features/latex)
+<div class="text-xs text-gray-500 mt-8">
+Kohavi et al. "Trustworthy Online Controlled Experiments." 2020
+</div>
 
 ---
 
-# Diagrams
+# When Experiments Aren't Ethical
 
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
+Examples:
 
-<div class="grid grid-cols-4 gap-5 pt-4 -mb-6">
+- Randomly assign some people to be exposed to lead paint while others are not, then see which group is more likely to develop neurological disorders
+- Assigning some social media users to receive more psychologically dark posts to understand how it impacts engagement
 
-```mermaid {scale: 0.5, alt: 'A simple sequence diagram'}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
+<div class="text-center text-red-500 font-bold mt-12">
+This is where causal inference becomes essential!
+</div>
 
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
+---
+
+# The Hierarchy of Evidence
+
+<div class="grid grid-cols-3 gap-4 mt-12">
+
+<div class="text-center">
+
+## Statistical Associations
+
+**Correlations**
+
+<div class="text-sm mt-4">
+Weaker causal claims
+<br/>
+Easier to obtain
+</div>
+
+</div>
+
+<div class="text-center">
+
+## Causal Inference
+
+**Observational Analysis**
+
+<div class="text-sm mt-4">
+Moderate causal claims
+<br/>
+Less easy
+</div>
+
+</div>
+
+<div class="text-center">
+
+## Experiments
+
+**RCTs / A/B Tests**
+
+<div class="text-sm mt-4">
+Stronger causal claims
+<br/>
+Hardest to conduct
+</div>
+
+</div>
+
+</div>
+
+---
+
+# Important Note on Correlations
+
+<div class="text-xl mt-8">
+
+I'm referring to **RAW associations and correlations**.
+
+Correlations are **indispensable** in causal inference work, but we make intelligent adjustments to make them more valuable.
+
+</div>
+
+---
+
+# Causal Inference vs Typical ML
+
+<div class="grid grid-cols-2 gap-8">
+
+<div>
+
+## Causal Inference Questions
+
+- How does improving neighborhood income inequality **reduce** neighborhood crime rate?
+- How does **increasing or decreasing** the price of a product impact demand?
+- What would be the **impact** on diabetes if we reduced average sugar consumption by X grams?
+
+</div>
+
+<div>
+
+## Typical ML Questions
+
+- Can I **cluster** neighborhoods by their characteristics?
+- Can I **predict** whether someone will convert from a lead to a customer?
+- How well can I **predict** whether a patient will be diagnosed with diabetes later in life?
+
+</div>
+
+</div>
+
+---
+
+# A Causal Graph (DAG)
 
 ```mermaid
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
+graph LR
+    A --> B
+    A --> C
+    B --> D
+    C --> D
+    C --> E
 ```
 
-```plantuml {scale: 0.7}
-@startuml
-
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
-
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
-
-cloud {
-  [Example 1]
-}
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
-
-@enduml
-```
-
+<div class="text-center mt-8">
+Directed Acyclic Graphs (DAGs) help us visualize causal relationships
 </div>
-
-Learn more: [Mermaid Diagrams](https://sli.dev/features/mermaid) and [PlantUML Diagrams](https://sli.dev/features/plantuml)
-
----
-foo: bar
-dragPos:
-  square: 691,32,167,_,-16
----
-
-# Draggable Elements
-
-Double-click on the draggable elements to edit their positions.
-
-<br>
-
-###### Directive Usage
-
-```md
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-```
-
-<br>
-
-###### Component Usage
-
-```md
-<v-drag text-3xl>
-  <div class="i-carbon:arrow-up" />
-  Use the `v-drag` component to have a draggable container!
-</v-drag>
-```
-
-<v-drag pos="663,206,261,_,-15">
-  <div text-center text-3xl border border-main rounded>
-    Double-click me!
-  </div>
-</v-drag>
-
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-
-###### Draggable Arrow
-
-```md
-<v-drag-arrow two-way />
-```
-
-<v-drag-arrow pos="67,452,253,46" two-way op70 />
-
----
-src: ./pages/imported-slides.md
-hide: false
----
-
----
-
-# Monaco Editor
-
-Slidev provides built-in Monaco Editor support.
-
-Add `{monaco}` to the code block to turn it into an editor:
-
-```ts {monaco}
-import { ref } from 'vue'
-import { emptyArray } from './external'
-
-const arr = ref(emptyArray(10))
-```
-
-Use `{monaco-run}` to create an editor that can execute the code directly in the slide:
-
-```ts {monaco-run}
-import { version } from 'vue'
-import { emptyArray, sayHello } from './external'
-
-sayHello()
-console.log(`vue ${version}`)
-console.log(emptyArray<number>(10).reduce(fib => [...fib, fib.at(-1)! + fib.at(-2)!], [1, 1]))
-```
 
 ---
 layout: center
 class: text-center
 ---
 
-# Learn More
+# Exercise Time! 🎯
 
-[Documentation](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/resources/showcases)
+Let's practice drawing causal graphs
 
-<PoweredBySlidev mt-10 />
+---
+
+# Car Insurance Example
+
+Variables to consider:
+- Make & model
+- Theft history
+- Car value
+- Advanced airbag
+- Antilock brakes
+- Driving course completion
+- Vehicle year
+- Car safety rating
+- Accident history
+- Age
+- Medical cost of accident
+- Good student status
+- Risk aversion
+
+<div class="text-center mt-8">
+How are these causally related?
+</div>
+
+---
+layout: center
+class: text-center
+---
+
+# Three Important Types of Causal Relationships
+
+---
+
+# 1) Confounders
+
+```mermaid
+graph LR
+    C[Confounder] --> T[Treatment]
+    C --> O[Outcome]
+    T -.-> O
+```
+
+<div class="mt-8">
+
+**Key points:**
+- Always want to **control for** confounders in inferential modeling
+- Confounding changes the effect size and possibly statistical significance
+- Confounders can also **flip the direction** of your association of interest
+- Leftover confounding is called "residual confounding"
+
+</div>
+
+---
+
+# Confounding Example: AirBnB
+
+```mermaid
+graph LR
+    TD[Tourism Demand] --> AB[Presence of AirBnB]
+    TD --> HP[House Prices]
+    AB -.-> HP
+```
+
+<div class="mt-8">
+
+**Tourism demand** is a confounder:
+- It increases AirBnB presence
+- It increases house prices
+- Creates a spurious association between AirBnB and prices
+
+</div>
+
+---
+
+# Types of Confounding
+
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div>
+
+## Positive Confounding
+Confounder introduces a bias that pushes association **away from the null**
+
+</div>
+
+<div>
+
+## Negative Confounding
+Confounder biases association **towards the null**
+
+</div>
+
+</div>
+
+---
+
+# Classic Example: Ice Cream & Crime
+
+<div class="text-center text-2xl mb-8">
+Do ice cream sales cause violent crime? 🍦 → 🔫
+</div>
+
+```mermaid
+graph TD
+    HW[Hot Weather] --> IC[Ice Cream Sales]
+    HW --> VC[Violent Crime]
+    IC -.spurious.-> VC
+```
+
+<div class="text-center mt-8">
+**Hot weather** confounds the relationship!
+</div>
+
+---
+
+# Controlling for Confounders
+
+After controlling for season/weather, the ice cream-crime association disappears!
+
+<div class="mt-12">
+
+## How do we "control" for things?
+
+**Option 1: Stratification (simple/naive way)**
+- Filter your dataset so the confounder only takes on 1 value
+- Example: `p(lung problems = 1 | smoker = 0)`
+
+**Option 2: Use a model!**
+- We'll go deep on this in the second half of the tutorial
+
+</div>
+
+---
+
+# How Experiments Break Confounding
+
+```mermaid
+graph LR
+    SES[Socioeconomic Status] --> CS[Classroom Size]
+    SES -.-> SP[Student Performance]
+    CS --> SP
+```
+
+<div class="mt-8">
+
+In experiments, **randomization breaks** the association between confounders and treatment!
+
+The randomization ensures classroom size is independent of socioeconomic status.
+
+</div>
+
+---
+
+# Key Insight
+
+<div class="text-2xl text-center my-20">
+
+**Experiments** are wonderful because randomization breaks all confounding
+
+**Causal inference** is when we take non-experimental (observational) data and carefully try to pick apart the confounding ourselves
+
+</div>
+
+---
+
+# 2) Colliders
+
+```mermaid
+graph LR
+    T[Treatment] --> C[Collider]
+    O[Outcome] --> C
+```
+
+<div class="mt-8">
+
+**Key points:**
+- **Never** want to control for colliders!
+- Conditioning on a common effect causes **collider bias**
+- Can bias results in positive or negative direction
+
+</div>
+
+---
+
+# Collider Example: Sick Days
+
+```mermaid
+graph LR
+    S[Smoking] --> LC[Lung Cancer]
+    SD[Sick Days Taken] --> LC
+```
+
+<div class="mt-8">
+
+If you control for lung cancer (the collider), you'll create a spurious association between smoking and sick days taken!
+
+This is called **collider bias** or **selection bias**
+
+</div>
+
+---
+
+# 3) Mediators
+
+```mermaid
+graph LR
+    T[Treatment] --> M[Mediator] --> O[Outcome]
+```
+
+<div class="mt-8">
+
+**Key points:**
+- Controlling for a mediator will **nullify** associations of interest
+- There are statistical tests of mediation you can use
+- Helps determine causal pathways in observational data
+
+</div>
+
+---
+
+# Mediator Example: Rideshare
+
+```mermaid
+graph LR
+    HR[Hours of Rain] --> RR[Rideshare Requests] --> DP[Daily Profit]
+```
+
+<div class="mt-8">
+
+If you control for rideshare requests (the mediator), you'll eliminate the effect of rain on profit!
+
+The requests ARE the mechanism by which rain affects profit.
+
+</div>
+
+---
+
+# Putting It All Together
+
+```mermaid
+graph TD
+    CF[Confounder] --> T[Treatment]
+    CF --> O[Outcome]
+    T --> M[Mediator]
+    M --> O
+    T --> CL[Collider]
+    O --> CL
+```
+
+<div class="text-center mt-8 text-xl">
+✅ Control for confounders<br/>
+❌ Don't control for colliders<br/>
+⚠️ Be careful with mediators
+</div>
+
+---
+
+# Reality is Complicated!
+
+<div class="text-center">
+
+Real-world causal graphs can be extremely complex
+
+</div>
+
+<div class="text-xs text-gray-500 mt-8">
+Hamra GB et al., "Model Averaging for Improving Inference from Causal Diagrams", 2015
+</div>
+
+---
+layout: center
+class: text-center
+---
+
+# Notebook Exercise #1
+
+## Causal Graphs
+
+Time to practice! 🚀
+
+---
+
+# Important Asides
+
+---
+
+# Avoid Automated Causal Discovery
+
+<div class="text-xl mt-12">
+
+❌ Don't rely on automated causal graph structure learning algorithms
+
+✅ Stick with good domain knowledge
+
+</div>
+
+<div class="mt-12">
+Understanding your domain and the data-generating process is crucial for building accurate causal models.
+</div>
+
+---
+
+# Common Pitfalls - Example #1
+
+**Problem:** Using proxies and lagged variables incorrectly
+
+I want to understand whether frequent emails to customers might impact customer satisfaction.
+
+I have survey data with customer self-reported satisfaction from a year ago, and I use this past month's number of emails for each customer as a proxy for how often we email them generally.
+
+<div class="text-red-500 mt-8">
+⚠️ Temporal ordering matters! Past satisfaction cannot be caused by future emails.
+</div>
+
+---
+
+# Common Pitfalls - Example #2
+
+**Problem:** Too many covariates, too little data
+
+I want to see the causal impact of a neighborhood's cleanliness on crime rates, controlling for 20 known confounders.
+
+I pull up an academic dataset with data on 40 distinct neighborhoods. So, my sample size is 40.
+
+<div class="text-red-500 mt-8">
+⚠️ You have 20 covariates but only 40 observations - overfitting guaranteed!
+</div>
+
+---
+
+# Common Pitfalls - Example #3
+
+**Problem:** Spillover effects
+
+I want to see how releasing a new in-app, multiplayer game through my social media app impacts user engagement. I only want to give it to some test users initially.
+
+With this multiplayer game you can play with anyone who has the social media app by sending them invites. Accidentally, our test users can invite non-test users.
+
+<div class="text-red-500 mt-8">
+⚠️ Treatment spillover violates the independence assumption!
+</div>
+
+---
+
+# Common Pitfalls - Example #4
+
+**Problem:** Insufficient confounder control
+
+We're curious how a job training program could impact a person's income 3 years in the future.
+
+Unfortunately we don't have lots of data on the participants so we perform a causal inference analysis only controlling for the person's age.
+
+<div class="text-red-500 mt-8">
+⚠️ Massive residual confounding - you need way more covariates!
+</div>
+
+---
+
+# Metrics for Causal Effects
+
+---
+
+# Counterfactuals with Binary Treatment
+
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div>
+
+### Observed Reality
+Experiences 500ms delay on website
+
+**Click-through rate: 15%**
+
+</div>
+
+<div>
+
+### Alternative Reality
+Experiences no delay on website
+
+**Click-through rate: 20%**
+
+</div>
+
+</div>
+
+<div class="text-center mt-12 text-2xl">
+Average Treatment Effect = 20% - 15% = <span class="text-green-500">+5%</span>
+</div>
+
+---
+
+# Important Note on Units of Analysis
+
+<div class="text-xl mt-12">
+
+You can apply causal inference to **any unit of analysis**:
+
+- People
+- Browser sessions
+- Webpages
+- Clusters of friends (social media data)
+- Neighborhoods
+- Buildings
+- Pharmacies
+- etc.
+
+</div>
+
+---
+
+# Common Causal Metrics
+
+| Metric | Population |
+|--------|-----------|
+| **ATE** - Average Treatment Effect | Effect in entire population |
+| **ATT** - Average Treatment Effect Among Treated | Effect in treated population |
+| **ATU** - Average Treatment Effect Among Untreated | Effect in untreated population |
+| **ITE** - Individual Treatment Effect | Effect for a single unit |
+
+---
+
+# Conditional Causal Metrics
+
+| Metric | Population |
+|--------|-----------|
+| **CATE** - Conditional Average Treatment Effect | Effect segmented by some covariate |
+| **CATT** - Conditional ATT | Effect in treated, segmented by covariate |
+| **CATU** - Conditional ATU | Effect in untreated, segmented by covariate |
+
+---
+
+# Modeling Approaches for Causal Inference
+
+---
+
+# Various Techniques
+
+- **Interrupted Time Series** - For policy changes
+- **Regression Discontinuity Design** - For threshold-based treatments
+- **Difference in Differences** - For before/after comparisons
+- **Propensity Score Matching** - Match similar units
+- **G-computation / S-learner** - ML-based approaches
+- **Causal Dose-Response Curves** - For continuous treatments
+
+---
+
+# Propensity Score Matching (PSM)
+
+<div class="text-center">
+
+```mermaid
+graph LR
+    P[Population] --> D[Divide by Treatment]
+    D --> M[Match Similar Units]
+    M --> C[Compare Outcomes]
+```
+
+</div>
+
+**Process:**
+1. Calculate probability of receiving treatment for each unit
+2. Match treated units with similar untreated units
+3. Compare outcomes between matched pairs
+
+---
+
+# PSM Step 1: Start with Data
+
+| ID# | Covar 1 | Covar 2 | treat | outcome |
+|-----|---------|---------|-------|---------|
+| 1   | ...     | ...     | 1     | 20      |
+| 2   | ...     | ...     | 1     | 15      |
+| 3   | ...     | ...     | 0     | 10      |
+| 4   | ...     | ...     | 0     | 10      |
+| 5   | ...     | ...     | 1     | 20      |
+
+---
+
+# PSM Step 2: Calculate Propensity Scores
+
+| ID# | Covar 1 | Covar 2 | treat | **ps** | outcome |
+|-----|---------|---------|-------|--------|---------|
+| 1   | ...     | ...     | 1     | **0.65** | 20    |
+| 2   | ...     | ...     | 1     | **0.33** | 15    |
+| 3   | ...     | ...     | 0     | **0.64** | 10    |
+| 4   | ...     | ...     | 0     | **0.33** | 10    |
+| 5   | ...     | ...     | 1     | **0.97** | 20    |
+
+Use a model to predict `treat` from covariates
+
+---
+
+# PSM Step 3: Match Units
+
+<div class="grid grid-cols-2 gap-4">
+
+<div>
+
+### Match 1
+| ID# | treat | ps | outcome |
+|-----|-------|-----|---------|
+| 1   | 1     | 0.65 | 20     |
+| 3   | 0     | 0.64 | 10     |
+
+</div>
+
+<div>
+
+### Match 2
+| ID# | treat | ps | outcome |
+|-----|-------|-----|---------|
+| 2   | 1     | 0.33 | 15     |
+| 4   | 0     | 0.33 | 10     |
+
+</div>
+
+</div>
+
+<div class="text-center mt-8">
+Match based on similar propensity scores!
+</div>
+
+---
+
+# PSM Step 4: Calculate Effect
+
+| ID# | treat | outcome |
+|-----|-------|---------|
+| 1   | 1     | 20      |
+| 2   | 1     | 15      |
+| 3   | 0     | 10      |
+| 4   | 0     | 10      |
+
+<div class="text-center mt-8 text-2xl">
+Average Treatment Effect = (20 + 15)/2 - (10 + 10)/2 = <span class="text-green-500">7.5</span>
+</div>
+
+---
+
+# G-Computation / S-Learner
+
+An ML-based approach to causal inference
+
+**Key idea:** Train a model to predict outcomes, then simulate counterfactuals
+
+---
+
+# G-Computation Step 1: Train Model
+
+| ID# | Covar 1 | Covar 2 | treat | outcome |
+|-----|---------|---------|-------|---------|
+| 1   | ...     | ...     | 1     | 20      |
+| 2   | ...     | ...     | 1     | 15      |
+| 3   | ...     | ...     | 0     | 10      |
+| 4   | ...     | ...     | 0     | 10      |
+| 5   | ...     | ...     | 1     | 20      |
+
+Train a model: `outcome ~ covariates + treat`
+
+Aim for high recall and precision!
+
+---
+
+# G-Computation Step 2: Force Treatment = 1
+
+| ID# | Covar 1 | Covar 2 | treat | outcome | **ŷ(treat=1)** |
+|-----|---------|---------|-------|---------|----------------|
+| 1   | ...     | ...     | **1** | 20      | **22.5**       |
+| 2   | ...     | ...     | **1** | 15      | **16.0**       |
+| 3   | ...     | ...     | **1** | 10      | **14.0**       |
+| 4   | ...     | ...     | **1** | 10      | **17.0**       |
+| 5   | ...     | ...     | **1** | 20      | **22.5**       |
+
+Predict outcomes when everyone is treated
+
+---
+
+# G-Computation Step 3: Force Treatment = 0
+
+| ID# | ŷ(treat=1) | **ŷ(treat=0)** | **CATE** |
+|-----|------------|----------------|----------|
+| 1   | 22.5       | **18.5**       | **4.0**  |
+| 2   | 16.0       | **14.0**       | **2.0**  |
+| 3   | 14.0       | **11.5**       | **2.5**  |
+| 4   | 17.0       | **13.0**       | **4.0**  |
+| 5   | 22.5       | **19.5**       | **3.0**  |
+
+<div class="text-center mt-8 text-2xl">
+Average CATE = <span class="text-green-500">3.1</span>
+</div>
+
+---
+layout: center
+class: text-center
+---
+
+# Notebook Exercise #2
+
+## Implementing G-Computation
+
+Time to code! 💻
+
+---
+
+# Continuous Treatments
+
+What if treatment isn't binary?
+
+**Example:** How does the *amount* of advertising spending affect sales?
+
+We need to estimate the **causal dose-response curve**
+
+---
+
+# Causal Dose-Response Curves
+
+<div class="text-center">
+
+```mermaid
+graph LR
+    T[Treatment Amount] --> O[Outcome]
+    C1[Covariate 1] --> O
+    C2[Covariate 2] --> O
+```
+
+</div>
+
+Instead of just two counterfactuals (treated/untreated), we have infinite counterfactuals along a continuous range!
+
+---
+
+# Visualizing Dose-Response
+
+<div class="text-center text-xl mt-12">
+
+**Outcome**
+
+↑
+
+|           /
+|         /
+|       /
+|     /
+|   /
+| /
++----------→ **Treatment**
+
+</div>
+
+The curve shows how outcome changes across different treatment levels
+
+---
+layout: center
+class: text-center
+---
+
+# Notebook Exercise #3
+
+## Dose-Response Curve Estimation
+
+Let's estimate causal curves! 📈
+
+---
+
+# A Simple Causal Inference Flowchart
+
+```mermaid
+graph TD
+    A[Treatment Variable Type?] --> B{Binary}
+    A --> C{Continuous}
+    A --> D{Nominal/Ordinal}
+    
+    B --> E[Use scikit-learn<br/>for G-computation]
+    C --> F[Use causal-curve<br/>package]
+    D --> G[Split into binary<br/>comparisons]
+    
+    E --> H{Outcome Type?}
+    H --> I[Continuous:<br/>Calculate ATE]
+    H --> J[Binary:<br/>Calculate probability<br/>differences]
+    
+    F --> K{Outcome Type?}
+    K --> L[Continuous:<br/>GPS_Regressor]
+    K --> M[Binary:<br/>GPS_Classifier]
+```
+
+---
+
+# Closing Thoughts
+
+---
+
+# The Perils of Multiple Testing
+
+<div class="text-xl mt-12">
+
+Running many statistical tests inflates your false positive rate!
+
+**Solutions:**
+- Use p-value correction (Bonferroni, FDR)
+- Pre-register your hypotheses
+- Be transparent about exploratory vs. confirmatory analyses
+
+</div>
+
+---
+
+# Be Humble!
+
+<div class="text-2xl text-center my-20">
+
+It's likely your research or business idea doesn't work!
+
+That's okay - **null results are still valuable results**
+
+</div>
+
+---
+
+# Troubleshooting Tips
+
+- Having **domain knowledge** and understanding the data-generating process is often way more productive than just throwing an algo at the problem
+- There is value in trying **multiple techniques** to understand their range of estimates (but use p-value correction!)
+- You'll **never capture all confounders**, but do aim to capture the major ones
+- If your results don't make sense and your code isn't buggy, you're probably **missing a big source of bias**
+- Causal inference is powerful but **still not as trustworthy as running a proper experiment**. Approach all results with healthy skepticism.
+
+---
+layout: center
+class: text-center
+---
+
+# Thank You! 🎉
+
+## Questions?
+
+<div class="mt-12">
+
+**Resources:**
+- GitHub: [your-repo-link]
+- Marimo Notebooks: [notebook-links]
+- Further Reading: Pearl's "The Book of Why"
+
+</div>
+
+---
+layout: center
+class: text-center
+---
+
+# Let's Practice!
+
+Open the Marimo notebooks and let's get hands-on with causal inference! 🚀
+
+```bash
+cd notebooks
+uv run marimo edit 01_causal_graphs.py
+```
