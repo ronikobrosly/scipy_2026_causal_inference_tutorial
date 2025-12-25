@@ -11,6 +11,13 @@ drawings:
   persist: false
 transition: slide-left
 title: Introduction to Causal Inference
+fonts:
+  # basically the text
+  sans: Robot
+  # use with `font-serif` css class from UnoCSS
+  serif: Robot Slab
+  # for code blocks, inline code, etc.
+  mono: Fira Code
 ---
 
 # Introduction to Causal Inference
