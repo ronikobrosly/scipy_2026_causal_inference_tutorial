@@ -27,27 +27,99 @@ css: unocss
   align-items: center;
 }
 
-/* Ensure headers use Inter */
+/* Ensure headers use Inter and make them larger/more prominent */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
 }
 
-/* Ensure body text uses Fira Code */
+/* Default header sizes for all slides (slightly smaller) */
+h1 {
+  font-size: 2.75rem !important;
+  line-height: 1.2 !important;
+  margin-bottom: 2rem !important;
+}
+
+h2 {
+  font-size: 2rem !important;
+  line-height: 1.3 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+h3 {
+  font-size: 1.6rem !important;
+  line-height: 1.4 !important;
+  margin-bottom: 1rem !important;
+}
+
+h4 {
+  font-size: 1.25rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Keep title slide header larger */
+.title-slide-wrapper h1 {
+  font-size: 3.5rem !important;
+}
+
+/* Ensure body text uses Fira Code and increase size by 25% */
 p, li, td, th, div, span {
   font-family: 'Fira Code', monospace !important;
+  font-size: 1.25rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Ensure code blocks also get larger */
+code, pre {
+  font-family: 'Fira Code', monospace !important;
+  font-size: 1.25rem !important;
+}
+
+/* Title slide custom layout */
+.title-slide-wrapper {
+  padding: 3rem !important;
+  height: calc(100vh - 6rem);
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 2rem;
+  align-items: center;
+}
+
+.title-slide-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title-slide-image {
+  width: 100%;
+  height: auto;
+  max-width: 450px;
 }
 </style>
 
+<div class="title-slide-wrapper">
+
+<div class="title-slide-content">
+
 # Introduction to Causal Inference
 
-SciPy 2026
-
+**SciPy 2026**
+<br>
 **Roni Kobrosly Ph.D.**
 
 <div class="pt-12">
   <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
     Press Space to begin <carbon:arrow-right class="inline"/>
   </span>
+</div>
+
+</div>
+
+<div>
+<img src="./imgs/title_image.png" class="title-slide-image" alt="Causal DAG" />
+</div>
+
 </div>
 
 ---
