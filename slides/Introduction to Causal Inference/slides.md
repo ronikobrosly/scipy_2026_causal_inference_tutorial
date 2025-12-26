@@ -1,24 +1,42 @@
 ---
-theme: default
-background: https://source.unsplash.com/collection/94734566/1920x1080
-class: text-center
-highlighter: shiki
-lineNumbers: false
+theme: geist
 info: |
-  ## Introduction to Causal Inference
-  SciPy 2026 Tutorial
+  ## Causal Inference Tutorial
+  SciPy 2026
 drawings:
   persist: false
 transition: slide-left
-title: Introduction to Causal Inference
+title: Causal Inference in Python
 fonts:
-  # basically the text
-  sans: Robot
-  # use with `font-serif` css class from UnoCSS
-  serif: Robot Slab
-  # for code blocks, inline code, etc.
-  mono: Fira Code
+  sans: 'Inter, sans-serif'
+  mono: 'Fira Code, monospace'
+  fallbacks: false
+css: unocss
 ---
+
+<style>
+/* Increase margins on all slides */
+.slidev-layout {
+  padding: 3rem !important;
+}
+
+/* Center all mermaid diagrams */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ensure headers use Inter */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Ensure body text uses Fira Code */
+p, li, td, th, div, span {
+  font-family: 'Fira Code', monospace !important;
+}
+</style>
 
 # Introduction to Causal Inference
 
@@ -30,6 +48,27 @@ SciPy 2026
   <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
     Press Space to begin <carbon:arrow-right class="inline"/>
   </span>
+</div>
+
+---
+
+# Causal Inference in Industry
+
+<div class="grid grid-cols-2 gap-4 text-sm">
+
+**Netflix Technology Blog:**
+- "A Survey of Causal Inference Applications at Netflix"
+
+**Twitter Engineering:**
+- Economics Nobel Prize winners discussion
+
+**Lyft:**
+- "Causal Forecasting at Lyft (Part 1)" by DJ Rich
+
+**LinkedIn:**
+- "Ocelot: Scaling observational causal inference at LinkedIn"
+- "How to Pick a Metric as the North Star for Algorithms to Optimize Business KPI? A Causal Inference Approach"
+
 </div>
 
 ---
@@ -606,6 +645,37 @@ Time to practice! 🚀
 
 <div class="text-xl mt-12">
 
+**Markov Equivalence Classes**
+
+These three graphs are indistinguishable with observational data:
+
+</div>
+
+<div class="flex justify-center mt-8">
+
+```mermaid
+graph LR
+    A --> B --> C
+```
+
+```mermaid
+graph LR
+    A --> B <-- C
+```
+
+```mermaid
+graph LR
+    A <-- B <-- C
+```
+
+</div>
+
+---
+
+# Avoid Automated Causal Discovery (cont.)
+
+<div class="text-xl mt-12">
+
 ❌ Don't rely on automated causal graph structure learning algorithms
 
 ✅ Stick with good domain knowledge
@@ -618,58 +688,245 @@ Understanding your domain and the data-generating process is crucial for buildin
 
 ---
 
-# Common Pitfalls - Example #1
+# LLMs and Causality
 
-**Problem:** Using proxies and lagged variables incorrectly
+<div class="text-lg mt-8">
 
-I want to understand whether frequent emails to customers might impact customer satisfaction.
+**Research Question:** Can Large Language Models Infer Causation from Correlation?
+
+**Authors:** Zhijing Jin et al. (2024)
+
+**Key Finding:** Current LLMs struggle with pure causal inference tasks, even though they may have seen causal facts in their training data.
+
+</div>
+
+<div class="text-xs text-gray-500 mt-8">
+Jin et al., Max Planck Institute, ETH Zürich, University of Michigan, Meta AI
+</div>
+
+---
+
+# LLMs and Causality: The Task
+
+<div class="grid grid-cols-2 gap-8">
+
+<div>
+
+**Training Corpus Contains:**
+- "Smoking causes cancer" ✓ Clear causal fact
+- "Upon the release of vaccines, disease cases reached a historical high"
+
+**New Task: Corr2Cause Inference**
+- Suppose A correlates with B. Can we infer A causes B?
+- A correlates with C. B correlates with C. However, A is independent of B. Can we infer A and B have a common effect?
+
+</div>
+
+<div>
+
+**Previous Tasks:**
+- "Alice slipped, so she fell down" → Plausible
+
+**Skill tested in previous work:**
+Empirical knowledge, not pure causal inference
+
+**This requires:**
+Inferring causation from correlation
+
+</div>
+
+</div>
+
+---
+
+# LLMs and Causality: Performance
+
+<div class="text-sm">
+
+| Model | F1 | Accuracy |
+|-------|-----|----------|
+| **Random Baselines** | | |
+| Always Majority | 0.0 | 84.77 |
+| Random (Uniform) | 20.38 | 62.78 |
+| **BERT-Based Models** | | |
+| BART MNLI | 33.38 | 78.50 |
+| **LLaMa-Based Models** | | |
+| Alpaca-6.7B | 27.37 | 21.33 |
+| **GPT-Based Models** | | |
+| GPT-3 Davinci | 27.82 | 31.61 |
+| GPT-3.5 | 21.69 | 69.46 |
+| GPT-4 | **29.08** | 64.60 |
+
+</div>
+
+<div class="text-center mt-4 text-red-500">
+Even GPT-4 struggles with pure causal inference from correlational statements!
+</div>
+
+---
+
+# LLMs and Causality: Fine-tuning Helps
+
+<div class="text-sm">
+
+| Model | F1 (Original) | F1 (Finetuned) | Improvement |
+|-------|---------------|----------------|-------------|
+| GPT-3 Ada | 0.0 | 79.85 | ✓ |
+| GPT-3 Davinci | 27.82 | **85.52** | ✓ |
+| BERT-Large | - | 85.26 | ✓ |
+| RoBERTa-Large | - | 89.10 | ✓ |
+| RoBERTa-Large MNLI | - | **94.74** | ✓ |
+
+</div>
+
+<div class="mt-4">
+Fine-tuning dramatically improves performance, but models still struggle with:
+- Paraphrased statements
+- Variable refactorization
+</div>
+
+---
+
+# Variable Importance ≠ Causality
+
+<div class="text-2xl text-center my-12 text-red-500">
+
+⚠️ Traditional variable importance methods don't tell you anything about causality!
+
+</div>
+
+<div class="text-lg">
+
+**Examples of non-causal importance measures:**
+- SHAP values
+- Feature importances from Random Forests
+- Correlation coefficients
+- Regression coefficients (without proper causal adjustment)
+
+**These tools are useful for prediction, but not for causal inference!**
+
+</div>
+
+---
+
+# Transitioning to Causal Modeling
+
+<div class="text-xl mt-12">
+
+We've discussed three types of causal relationships.
+
+Going forward, we're going to assume you identified key **confounders** you want to control for, as you estimate the causal impact between a **"treatment"** and an **"outcome"**...
+
+</div>
+
+---
+
+# If You Are Doing Causal Modeling...
+
+<div class="text-lg">
+
+**Best Practices:**
+
+1. **Think before looking at data** - Carefully consider quantities of interest and their relationships using domain knowledge
+
+2. **Stick with a small set of important variables** - Only include variables you have domain knowledge about
+
+3. **Understand bivariate relationships** - Before modeling, examine relationships between:
+   - Independent variables with each other
+   - Independent variables with dependent variable
+
+4. **Identify potential confounders** - Clearly identify covariates to control for and those NOT to control for
+
+</div>
+
+---
+
+# Assumptions of Causal Inference
+
+<div class="text-lg">
+
+**Four Key Assumptions:**
+
+1. **Temporality** - Causes always occur before effects. Treatment must occur before measured outcome. Covariates should occur before treatment.
+
+2. **SUTVA (Stable Unit Treatment Value)** - The treatment status of one individual does not affect the potential outcomes of any other individuals.
+
+3. **Positivity** - For each level of each covariate, there needs to be some variability in treatment and outcome variables.
+
+4. **Ignorability** - All major confounding variables are included in your data. This is tough but necessary for unbiased treatment effect estimates.
+
+</div>
+
+---
+
+# Assumption Violations: Example #1
+
+**Temporality Violation**
+
+<div class="bg-red-100 p-4 mt-4">
+
+**Scenario:** I want to understand whether frequent emails to customers might impact customer satisfaction.
 
 I have survey data with customer self-reported satisfaction from a year ago, and I use this past month's number of emails for each customer as a proxy for how often we email them generally.
 
-<div class="text-red-500 mt-8">
-⚠️ Temporal ordering matters! Past satisfaction cannot be caused by future emails.
+</div>
+
+<div class="text-red-500 mt-4 text-xl">
+⚠️ **Problem:** Past satisfaction cannot be caused by future emails! Temporal ordering is violated.
 </div>
 
 ---
 
-# Common Pitfalls - Example #2
+# Assumption Violations: Example #2
 
-**Problem:** Too many covariates, too little data
+**Positivity Violation**
 
-I want to see the causal impact of a neighborhood's cleanliness on crime rates, controlling for 20 known confounders.
+<div class="bg-red-100 p-4 mt-4">
+
+**Scenario:** I want to see the causal impact of a neighborhood's cleanliness on crime rates, controlling for 20 known confounders.
 
 I pull up an academic dataset with data on 40 distinct neighborhoods. So, my sample size is 40.
 
-<div class="text-red-500 mt-8">
-⚠️ You have 20 covariates but only 40 observations - overfitting guaranteed!
+</div>
+
+<div class="text-red-500 mt-4 text-xl">
+⚠️ **Problem:** 20 covariates with only 40 observations! Severe overfitting risk and positivity violations are likely.
 </div>
 
 ---
 
-# Common Pitfalls - Example #3
+# Assumption Violations: Example #3
 
-**Problem:** Spillover effects
+**SUTVA Violation**
 
-I want to see how releasing a new in-app, multiplayer game through my social media app impacts user engagement. I only want to give it to some test users initially.
+<div class="bg-red-100 p-4 mt-4">
+
+**Scenario:** I want to see how releasing a new in-app, multiplayer game through my social media app impacts user engagement. I only want to give it to some test users initially.
 
 With this multiplayer game you can play with anyone who has the social media app by sending them invites. Accidentally, our test users can invite non-test users.
 
-<div class="text-red-500 mt-8">
-⚠️ Treatment spillover violates the independence assumption!
+</div>
+
+<div class="text-red-500 mt-4 text-xl">
+⚠️ **Problem:** Treatment spillover! Test users affect control users through invites, violating independence.
 </div>
 
 ---
 
-# Common Pitfalls - Example #4
+# Assumption Violations: Example #4
 
-**Problem:** Insufficient confounder control
+**Ignorability Violation**
 
-We're curious how a job training program could impact a person's income 3 years in the future.
+<div class="bg-red-100 p-4 mt-4">
+
+**Scenario:** We're curious how a job training program could impact a person's income 3 years in the future.
 
 Unfortunately we don't have lots of data on the participants so we perform a causal inference analysis only controlling for the person's age.
 
-<div class="text-red-500 mt-8">
-⚠️ Massive residual confounding - you need way more covariates!
+</div>
+
+<div class="text-red-500 mt-4 text-xl">
+⚠️ **Problem:** Massive residual confounding! Education, work history, location, industry, etc. are all missing.
 </div>
 
 ---
@@ -752,14 +1009,93 @@ You can apply causal inference to **any unit of analysis**:
 
 ---
 
-# Various Techniques
+# Interrupted Time Series
 
-- **Interrupted Time Series** - For policy changes
-- **Regression Discontinuity Design** - For threshold-based treatments
-- **Difference in Differences** - For before/after comparisons
-- **Propensity Score Matching** - Match similar units
-- **G-computation / S-learner** - ML-based approaches
-- **Causal Dose-Response Curves** - For continuous treatments
+<div class="text-lg mb-8">
+Used when a policy or intervention occurs at a specific time point
+</div>
+
+<div class="flex justify-center">
+
+```mermaid
+graph LR
+    subgraph Before
+    T1[Time 1] --> T2[Time 2]
+    end
+    subgraph After
+    T3[Time 3] --> T4[Time 4]
+    end
+    T2 -.Intervention.-> T3
+```
+
+</div>
+
+<div class="mt-8">
+
+**Key Idea:** Compare the trend before intervention to the trend after intervention
+
+**Example:** Impact of a new law on crime rates
+
+</div>
+
+---
+
+# Regression Discontinuity Design
+
+<div class="text-lg mb-8">
+Used when treatment assignment is based on a threshold/cutoff
+</div>
+
+<div class="text-center my-8">
+
+**Example:** Poverty Index cutoff at 58
+
+- If Poverty Index < 58: Eligible for assistance
+- If Poverty Index ≥ 58: Not eligible
+
+</div>
+
+<div class="mt-8">
+
+**Key Idea:** Compare outcomes just above and below the threshold
+
+**Assumption:** Units just above/below cutoff are similar except for treatment
+
+</div>
+
+---
+
+# Difference in Differences
+
+<div class="text-lg mb-8">
+Used when you have pre/post data for both treatment and control groups
+</div>
+
+<div class="flex justify-center my-8">
+
+```mermaid
+graph LR
+    subgraph Pre
+    T1[Treatment Group]
+    C1[Control Group]
+    end
+    subgraph Post
+    T2[Treatment Group]
+    C2[Control Group]
+    end
+    T1 --> T2
+    C1 --> C2
+```
+
+</div>
+
+<div class="mt-4">
+
+**Key Idea:** (Treatment_post - Treatment_pre) - (Control_post - Control_pre)
+
+**Assumption:** Parallel trends - both groups would have changed similarly without treatment
+
+</div>
 
 ---
 
