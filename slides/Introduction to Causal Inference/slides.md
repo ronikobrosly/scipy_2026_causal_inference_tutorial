@@ -663,7 +663,7 @@ Confounder biases association **towards the zero**
 
 # Classic Example: Ice Cream & Crime
 
-<div class="text-center text-2xl mb-8">
+<div class="text-center mt-8">
 Do ice cream sales cause violent crime? 🍦 → 🔫
 </div>
 
@@ -686,9 +686,6 @@ graph TD
     linkStyle 2 stroke:#42a5f5,stroke-width:2.5px
 ```
 
-<div class="text-center mt-8">
-**Hot weather** confounds the relationship!
-</div>
 
 ---
 
@@ -696,16 +693,16 @@ graph TD
 
 After controlling for season/weather, the ice cream-crime association disappears!
 
-<div class="mt-12">
+<div class="mt-8">
 
-## How do we "control" for things?
+### How do we "control" for things?
 
 **Option 1: Stratification (simple/naive way)**
-- Filter your dataset so the confounder only takes on 1 value
-- Example: `p(lung problems = 1 | smoker = 0)`
+- • Filter your dataset so the confounder only takes on 1 value
+- • Example: `p(lung problems = 1 | smoker = 0)`
 
 **Option 2: Use a model!**
-- We'll go deep on this in the second half of the tutorial
+- • We'll go deep on this in the second half of the tutorial
 
 </div>
 
@@ -743,7 +740,7 @@ The randomization ensures classroom size is independent of socioeconomic status.
 
 # Key Insight
 
-<div class="text-2xl text-center my-20">
+<div class="text-center mt-8">
 
 **Experiments** are wonderful because randomization breaks all confounding
 
@@ -775,9 +772,9 @@ graph LR
 <div class="mt-8">
 
 **Key points:**
-- **Never** want to control for colliders!
-- Conditioning on a common effect causes **collider bias**
-- Can bias results in positive or negative direction
+- • **Never** want to control for colliders!
+- • Conditioning on a common effect causes **collider bias**
+- • Can bias results in positive or negative direction
 
 </div>
 
@@ -833,9 +830,9 @@ graph LR
 <div class="mt-8">
 
 **Key points:**
-- Controlling for a mediator will **nullify** associations of interest
-- There are statistical tests of mediation you can use
-- Helps determine causal pathways in observational data
+- • Controlling for a mediator will **nullify** associations of interest
+- • There are statistical tests of mediation you can use
+- • Helps determine causal pathways in observational data
 
 </div>
 
@@ -896,7 +893,7 @@ graph TD
     linkStyle default stroke:#42a5f5,stroke-width:2.5px
 ```
 
-<div class="text-center mt-8 text-xl">
+<div class="text-center mt-8">
 ✅ Control for confounders<br/>
 ❌ Don't control for colliders<br/>
 ⚠️ Be careful with mediators
@@ -923,7 +920,7 @@ class: text-center
 
 # Notebook Exercise #1
 
-## Causal Graphs
+### Causal Graphs
 
 Time to practice! 🚀
 
@@ -935,15 +932,13 @@ Time to practice! 🚀
 
 # Avoid Automated Causal Discovery
 
-<div class="text-xl mt-12">
+<div class="mt-8">
 
 **Markov Equivalence Classes**
 
 These three graphs are indistinguishable with observational data:
 
 </div>
-
-<div class="flex justify-center mt-8">
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
@@ -986,13 +981,11 @@ graph LR
     linkStyle default stroke:#42a5f5,stroke-width:2.5px
 ```
 
-</div>
-
 ---
 
 # Avoid Automated Causal Discovery (cont.)
 
-<div class="text-xl mt-12">
+<div class="mt-8">
 
 ❌ Don't rely on automated causal graph structure learning algorithms
 
@@ -1000,7 +993,7 @@ graph LR
 
 </div>
 
-<div class="mt-12">
+<div class="mt-8">
 Understanding your domain and the data-generating process is crucial for building accurate causal models.
 </div>
 
@@ -1008,7 +1001,7 @@ Understanding your domain and the data-generating process is crucial for buildin
 
 # LLMs and Causality
 
-<div class="text-lg mt-8">
+<div class="mt-8">
 
 **Research Question:** Can Large Language Models Infer Causation from Correlation?
 
@@ -1031,19 +1024,19 @@ Jin et al., Max Planck Institute, ETH Zürich, University of Michigan, Meta AI
 <div>
 
 **Training Corpus Contains:**
-- "Smoking causes cancer" ✓ Clear causal fact
-- "Upon the release of vaccines, disease cases reached a historical high"
+- • "Smoking causes cancer" ✓ Clear causal fact
+- • "Upon the release of vaccines, disease cases reached a historical high"
 
 **New Task: Corr2Cause Inference**
-- Suppose A correlates with B. Can we infer A causes B?
-- A correlates with C. B correlates with C. However, A is independent of B. Can we infer A and B have a common effect?
+- • Suppose A correlates with B. Can we infer A causes B?
+- • A correlates with C. B correlates with C. However, A is independent of B. Can we infer A and B have a common effect?
 
 </div>
 
 <div>
 
 **Previous Tasks:**
-- "Alice slipped, so she fell down" → Plausible
+- • "Alice slipped, so she fell down" → Plausible
 
 **Skill tested in previous work:**
 Empirical knowledge, not pure causal inference
@@ -1077,8 +1070,8 @@ Inferring causation from correlation
 
 </div>
 
-<div class="text-center mt-4 text-red-500">
-Even GPT-4 struggles with pure causal inference from correlational statements!
+<div class="text-center mt-8">
+**Even GPT-4 struggles with pure causal inference from correlational statements!**
 </div>
 
 ---
@@ -1097,29 +1090,29 @@ Even GPT-4 struggles with pure causal inference from correlational statements!
 
 </div>
 
-<div class="mt-4">
+<div class="mt-8">
 Fine-tuning dramatically improves performance, but models still struggle with:
-- Paraphrased statements
-- Variable refactorization
+- • Paraphrased statements
+- • Variable refactorization
 </div>
 
 ---
 
 # Variable Importance ≠ Causality
 
-<div class="text-2xl text-center my-12 text-red-500">
+<div class="text-center mt-8">
 
-⚠️ Traditional variable importance methods don't tell you anything about causality!
+**⚠️ Traditional variable importance methods don't tell you anything about causality!**
 
 </div>
 
-<div class="text-lg">
+<div class="mt-8">
 
 **Examples of non-causal importance measures:**
-- SHAP values
-- Feature importances from Random Forests
-- Correlation coefficients
-- Regression coefficients (without proper causal adjustment)
+- • SHAP values
+- • Feature importances from Random Forests
+- • Correlation coefficients
+- • Regression coefficients (without proper causal adjustment)
 
 **These tools are useful for prediction, but not for causal inference!**
 
@@ -1129,7 +1122,7 @@ Fine-tuning dramatically improves performance, but models still struggle with:
 
 # Transitioning to Causal Modeling
 
-<div class="text-xl mt-12">
+<div class="mt-8">
 
 We've discussed three types of causal relationships.
 
@@ -1141,7 +1134,7 @@ Going forward, we're going to assume you identified key **confounders** you want
 
 # If You Are Doing Causal Modeling...
 
-<div class="text-lg">
+<div class="mt-8">
 
 **Best Practices:**
 
@@ -1150,8 +1143,8 @@ Going forward, we're going to assume you identified key **confounders** you want
 2. **Stick with a small set of important variables** - Only include variables you have domain knowledge about
 
 3. **Understand bivariate relationships** - Before modeling, examine relationships between:
-   - Independent variables with each other
-   - Independent variables with dependent variable
+   - • Independent variables with each other
+   - • Independent variables with dependent variable
 
 4. **Identify potential confounders** - Clearly identify covariates to control for and those NOT to control for
 
@@ -1161,7 +1154,7 @@ Going forward, we're going to assume you identified key **confounders** you want
 
 # Assumptions of Causal Inference
 
-<div class="text-lg">
+<div class="mt-8">
 
 **Four Key Assumptions:**
 
@@ -1181,16 +1174,14 @@ Going forward, we're going to assume you identified key **confounders** you want
 
 **Temporality Violation**
 
-<div class="bg-red-100 p-4 mt-4">
+<div class="mt-8">
 
 **Scenario:** I want to understand whether frequent emails to customers might impact customer satisfaction.
 
 I have survey data with customer self-reported satisfaction from a year ago, and I use this past month's number of emails for each customer as a proxy for how often we email them generally.
 
-</div>
+**⚠️ Problem:** Past satisfaction cannot be caused by future emails! Temporal ordering is violated.
 
-<div class="text-red-500 mt-4 text-xl">
-⚠️ **Problem:** Past satisfaction cannot be caused by future emails! Temporal ordering is violated.
 </div>
 
 ---
@@ -1199,16 +1190,14 @@ I have survey data with customer self-reported satisfaction from a year ago, and
 
 **Positivity Violation**
 
-<div class="bg-red-100 p-4 mt-4">
+<div class="mt-8">
 
 **Scenario:** I want to see the causal impact of a neighborhood's cleanliness on crime rates, controlling for 20 known confounders.
 
 I pull up an academic dataset with data on 40 distinct neighborhoods. So, my sample size is 40.
 
-</div>
+**⚠️ Problem:** 20 covariates with only 40 observations! Severe overfitting risk and positivity violations are likely.
 
-<div class="text-red-500 mt-4 text-xl">
-⚠️ **Problem:** 20 covariates with only 40 observations! Severe overfitting risk and positivity violations are likely.
 </div>
 
 ---
@@ -1217,16 +1206,14 @@ I pull up an academic dataset with data on 40 distinct neighborhoods. So, my sam
 
 **SUTVA Violation**
 
-<div class="bg-red-100 p-4 mt-4">
+<div class="mt-8">
 
 **Scenario:** I want to see how releasing a new in-app, multiplayer game through my social media app impacts user engagement. I only want to give it to some test users initially.
 
 With this multiplayer game you can play with anyone who has the social media app by sending them invites. Accidentally, our test users can invite non-test users.
 
-</div>
+**⚠️ Problem:** Treatment spillover! Test users affect control users through invites, violating independence.
 
-<div class="text-red-500 mt-4 text-xl">
-⚠️ **Problem:** Treatment spillover! Test users affect control users through invites, violating independence.
 </div>
 
 ---
@@ -1235,16 +1222,14 @@ With this multiplayer game you can play with anyone who has the social media app
 
 **Ignorability Violation**
 
-<div class="bg-red-100 p-4 mt-4">
+<div class="mt-8">
 
 **Scenario:** We're curious how a job training program could impact a person's income 3 years in the future.
 
 Unfortunately we don't have lots of data on the participants so we perform a causal inference analysis only controlling for the person's age.
 
-</div>
+**⚠️ Problem:** Massive residual confounding! Education, work history, location, industry, etc. are all missing.
 
-<div class="text-red-500 mt-4 text-xl">
-⚠️ **Problem:** Massive residual confounding! Education, work history, location, industry, etc. are all missing.
 </div>
 
 ---
@@ -1277,26 +1262,26 @@ Experiences no delay on website
 
 </div>
 
-<div class="text-center mt-12 text-2xl">
-Average Treatment Effect = 20% - 15% = <span class="text-green-500">+5%</span>
+<div class="text-center mt-8">
+Average Treatment Effect = 20% - 15% = **+5%**
 </div>
 
 ---
 
 # Important Note on Units of Analysis
 
-<div class="text-xl mt-12">
+<div class="mt-8">
 
 You can apply causal inference to **any unit of analysis**:
 
-- People
-- Browser sessions
-- Webpages
-- Clusters of friends (social media data)
-- Neighborhoods
-- Buildings
-- Pharmacies
-- etc.
+- • People
+- • Browser sessions
+- • Webpages
+- • Clusters of friends (social media data)
+- • Neighborhoods
+- • Buildings
+- • Pharmacies
+- • etc.
 
 </div>
 
@@ -1329,11 +1314,9 @@ You can apply causal inference to **any unit of analysis**:
 
 # Interrupted Time Series
 
-<div class="text-lg mb-8">
+<div class="mt-8">
 Used when a policy or intervention occurs at a specific time point
 </div>
-
-<div class="flex justify-center">
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
@@ -1354,8 +1337,6 @@ graph LR
     linkStyle default stroke:#42a5f5,stroke-width:2.5px
 ```
 
-</div>
-
 <div class="mt-8">
 
 **Key Idea:** Compare the trend before intervention to the trend after intervention
@@ -1368,16 +1349,16 @@ graph LR
 
 # Regression Discontinuity Design
 
-<div class="text-lg mb-8">
+<div class="mt-8">
 Used when treatment assignment is based on a threshold/cutoff
 </div>
 
-<div class="text-center my-8">
+<div class="text-center mt-8">
 
 **Example:** Poverty Index cutoff at 58
 
-- If Poverty Index < 58: Eligible for assistance
-- If Poverty Index ≥ 58: Not eligible
+- • If Poverty Index < 58: Eligible for assistance
+- • If Poverty Index ≥ 58: Not eligible
 
 </div>
 
@@ -1393,11 +1374,9 @@ Used when treatment assignment is based on a threshold/cutoff
 
 # Difference in Differences
 
-<div class="text-lg mb-8">
+<div class="mt-8">
 Used when you have pre/post data for both treatment and control groups
 </div>
-
-<div class="flex justify-center my-8">
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
@@ -1418,9 +1397,7 @@ graph LR
     linkStyle default stroke:#42a5f5,stroke-width:2.5px
 ```
 
-</div>
-
-<div class="mt-4">
+<div class="mt-8">
 
 **Key Idea:** (Treatment_post - Treatment_pre) - (Control_post - Control_pre)
 
@@ -1524,8 +1501,8 @@ Match based on similar propensity scores!
 | 3   | 0     | 10      |
 | 4   | 0     | 10      |
 
-<div class="text-center mt-8 text-2xl">
-Average Treatment Effect = (20 + 15)/2 - (10 + 10)/2 = <span class="text-green-500">7.5</span>
+<div class="text-center mt-8">
+Average Treatment Effect = (20 + 15)/2 - (10 + 10)/2 = **7.5**
 </div>
 
 ---
@@ -1578,8 +1555,8 @@ Predict outcomes when everyone is treated
 | 4   | 17.0       | **13.0**       | **4.0**  |
 | 5   | 22.5       | **19.5**       | **3.0**  |
 
-<div class="text-center mt-8 text-2xl">
-Average CATE = <span class="text-green-500">3.1</span>
+<div class="text-center mt-8">
+Average CATE = **3.1**
 </div>
 
 ---
@@ -1589,7 +1566,7 @@ class: text-center
 
 # Notebook Exercise #2
 
-## Implementing G-Computation
+### Implementing G-Computation
 
 Time to code! 💻
 
@@ -1635,7 +1612,7 @@ Instead of just two counterfactuals (treated/untreated), we have infinite counte
 
 # Visualizing Dose-Response
 
-<div class="text-center text-xl mt-12">
+<div class="text-center mt-8">
 
 **Outcome**
 
@@ -1660,7 +1637,7 @@ class: text-center
 
 # Notebook Exercise #3
 
-## Dose-Response Curve Estimation
+### Dose-Response Curve Estimation
 
 Let's estimate causal curves! 📈
 
@@ -1716,14 +1693,14 @@ graph TD
 
 # The Perils of Multiple Testing
 
-<div class="text-xl mt-12">
+<div class="mt-8">
 
 Running many statistical tests inflates your false positive rate!
 
 **Solutions:**
-- Use p-value correction (Bonferroni, FDR)
-- Pre-register your hypotheses
-- Be transparent about exploratory vs. confirmatory analyses
+- • Use p-value correction (Bonferroni, FDR)
+- • Pre-register your hypotheses
+- • Be transparent about exploratory vs. confirmatory analyses
 
 </div>
 
@@ -1731,7 +1708,7 @@ Running many statistical tests inflates your false positive rate!
 
 # Be Humble!
 
-<div class="text-2xl text-center my-20">
+<div class="text-center mt-8">
 
 It's likely your research or business idea doesn't work!
 
@@ -1743,11 +1720,11 @@ That's okay - **null results are still valuable results**
 
 # Troubleshooting Tips
 
-- Having **domain knowledge** and understanding the data-generating process is often way more productive than just throwing an algo at the problem
-- There is value in trying **multiple techniques** to understand their range of estimates (but use p-value correction!)
-- You'll **never capture all confounders**, but do aim to capture the major ones
-- If your results don't make sense and your code isn't buggy, you're probably **missing a big source of bias**
-- Causal inference is powerful but **still not as trustworthy as running a proper experiment**. Approach all results with healthy skepticism.
+- • Having **domain knowledge** and understanding the data-generating process is often way more productive than just throwing an algo at the problem
+- • There is value in trying **multiple techniques** to understand their range of estimates (but use p-value correction!)
+- • You'll **never capture all confounders**, but do aim to capture the major ones
+- • If your results don't make sense and your code isn't buggy, you're probably **missing a big source of bias**
+- • Causal inference is powerful but **still not as trustworthy as running a proper experiment**. Approach all results with healthy skepticism.
 
 ---
 layout: center
@@ -1756,14 +1733,14 @@ class: text-center
 
 # Thank You! 🎉
 
-## Questions?
+### Questions?
 
-<div class="mt-12">
+<div class="mt-8">
 
 **Resources:**
-- GitHub: [your-repo-link]
-- Marimo Notebooks: [notebook-links]
-- Further Reading: Pearl's "The Book of Why"
+- • GitHub: [your-repo-link]
+- • Marimo Notebooks: [notebook-links]
+- • Further Reading: Pearl's "The Book of Why"
 
 </div>
 
