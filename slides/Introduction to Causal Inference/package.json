@@ -1,0 +1,18 @@
+{
+  "name": "scipy-2026-causal-inference-tutorial",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.11.1",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "slidev-theme-geist": "^0.8.1",
+    "slidev-theme-purplin": "^1.2.0",
+    "vue": "^3.5.26"
+  }
+}

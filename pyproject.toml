@@ -1,0 +1,26 @@
+[project]
+name = "scipy-2026-causal-inference-tutorial"
+version = "1.0.0"
+description = "All artifacts related to the SciPy 2026 tutorial proposal"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "causalgraphicalmodels>=0.0.4",
+    "dowhy>=0.11",
+    "marimo>=0.18.4",
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.0",
+    "pandas>=2.3.3",
+    "pydot>=4.0.1",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.16.3",
+    "tensorflow>=2.18.0",
+    "tensorflow-probability>=0.25.0",
+    "tfp-causalimpact>=0.1.2",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.12.0",
+    "ruff>=0.14.10",
+]
