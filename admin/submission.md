@@ -13,27 +13,27 @@ Roni Kobrosly, PhD
 
 Thank you for considering this tutorial for SciPy 2026! I actually presented this at SciPy 2024 and SciPy 2023.
 
-Since July 2024, I've been fine-tuning the materials based on misc feedback I get. One of the biggest insights I've gotten since last year is that standard ML people can better grasp the point of causal inference if I describe it as a form of causal feature importance. 
+I took a break from sharing this tutorial in a few venues in 2025 to step back and devote more time to expanding my own causal inference toolkit. The python, open-source causal inference world has expanded greatly since 2024. My aim with this latest version of the tutorial is still explain the foundational elements of causality (e.g. confounding, colliders, causal graphs, the difference between standard AI/ML and causal analysis), while also sharing the `PyWhy` ecosystem that the python academic community and data industry has increasingly coalesced around. Attendees should be able to walk away with a solid causal inference foundation while knowing about the most popular/accepted CI tools (as of late 2025 / early 2026).
 
-As with last year, the attendees can run everything in Google Colab. There weren't many environment / setup issues last year and I wouldn't expect any (unless an attendee cannot connect to the internet).  
+I pivoted away from Google Slides to a Slidev deck, since creating a deck with just a markdown file turns out to be super helpful in the age of AI agents. There will still be a PDF rendering of the deck available in this repo though. I also pivoted away from Google Colab notebooks to marimo notebooks. For the moment, the notebooks are just local but I intend to upload them to `molab` should this talk be accepted. 
 
-If accepted, between now and the conference I would likely make slight tweaks to the flow of the presentation along with any suggestions you may provide.
+If accepted, between now and the conference I would likely make slight tweaks to the flow of the Slidev presentation and the Marimo notebooks. and any suggestions you may provide.
 
 
 ## Presenter Bio
 
 I am a former epidemiology researcher who has spent approximately a decade employing causal modeling and inference. The bulk of my academic career was spent conducting data analyses to estimate the population-level effects of harmful environment exposures, when traditional randomized experiments were infeasible or unethical. During this time, I taught a couple undergraduate epidemiology courses, once of which involved a sizable introduction to causal thinking. I've also presented many one-off departmental presentations and at a few epidemiology conferences on causal inference in both cases.
 
-Since leaving the academic world, I've been loving my second life in the tech industry as a data scientist, ML engineer, and more recently as the Head of Data Science at a medium-sized health tech company based in Washington DC. I love mentoring junior data folks and explaining the magic of data analysis and modeling to non-technical audience.
+Since leaving the academic world, I've been loving my second life in the tech industry as a data scientist, AI/ML engineer, and more recently as a Director of Data Science Observability at Capital One. I love mentoring junior data folks and explaining the magic of data analysis and modeling to non-technical audience.
 
-I also am a member of the open-source community, being the author and maintainer of the `causal-curve` python package. This package provides a set of tools for estimating the causal impact of continuous/non-binary treatments (e.g. estimating the causal impact of a neighborhood's income inequality on local crime, or understanding the causal effect of increasing a product's price on conversion rates).
+I also am a member of the open-source community, being the author of the `causal-curve` python package. This package provides a set of tools for estimating the causal impact of continuous/non-binary treatments (e.g. estimating the causal impact of a neighborhood's income inequality on local crime, or understanding the causal effect of increasing a product's price on conversion rates).
 
 
 ## Short Description
 
-This tutorial session is intended to give attendees a gentle introduction to applying causal thinking and causal inference to data using python. Causal data analysis is very common in many academic domains (e.g. in social psychology, epidemiology, macroeconomics, public policy research, sociology, and more) as well as in industry (all of the largest Silicon Valley tech companies employ teams of scientists who answer business questions purely with causal inference methods).
+This tutorial session is intended to give attendees a gentle introduction to applying causal thinking and inference using python. Causal data analysis is very common in many academic domains (e.g. in social psychology, epidemiology, macroeconomics, public policy research, sociology, and more) as well as in industry (all of the largest Silicon Valley tech companies employ teams of scientists who answer business questions purely with causal inference methods).
 
-The tutorial will involve a combination of presentations with open Q&A and hands-on exercises contained in Google Colab notebooks. This session will cover the difference between correlation and causation, the pitfalls of conducting an analysis using observational data, how causal inference can help get around these pitfalls, and examples of common, modern modeling approaches used to conduct causal inference (propensity score matching, estimating causal curves, meta-learning, and double ML). After the tutorial, the attendees should have a good foundational understanding of causality and the ability to confidently explore the topic on their own. Causal inference can be a very theory-heavy topic, making it impenetrable to novices. In this tutorial, we'll aim to take a more practical perspective on causal inference, while still occasionally touching on the theory.
+The tutorial will involve a combination of presentations with open Q&A and hands-on exercises contained in Marimo notebooks. This session will cover the difference between correlation and causation, the pitfalls of conducting an analysis using observational data, how causal inference can help get around these pitfalls, and examples of common, modern modeling approaches using the latest python causal inference frameworks (e.g. DoWhy). After the tutorial, the attendees should have a good foundational understanding of causality and the ability to confidently explore the topic on their own. Causal inference can be a very theory-heavy topic, making it impenetrable to novices. In this tutorial, we'll aim to take a more practical perspective on causal inference, while still occasionally touching on the theory.
 
 Tutorial participants are not expected to be familiar with causal inference before attending, but we hope they have an earnest curiosity to learn about it! To get the most out of the session, the participants ought to have experience working with the common python data stack: matplotlib, numpy, pandas, and scikit-learn. Attendees should have some experience conducting classic machine learning modeling using the scikit-learn API, although having advanced machine learning expertise is absolutely not a prerequisite. A very basic understanding of statistics would be helpful (e.g. understanding what a mean is, what confidence intervals represent).
 
@@ -77,27 +77,28 @@ Tutorial participants are not expected to be familiar with causal inference befo
         * A reminder about counterfactuals
         * Walk through all of the flavors of average treatment effect (ATE)
     * Interrupted Time Series
-    * Regression Discontuity 
     * Difference in differences
+    * Bayesian structural time series
     * Propensity Score Matching (PSM)
         * Talk through how PSM looks when using a dataset
-    * G-computation / S-learner
+    *  Metalearners (S-learner / G-computation)
         * Talk through an example
 
-* Notebook 2 exercises: G-computation / S-learner exercise (20 minutes)
+* Notebook 2 exercises: Metalearning exercise (20 minutes)
 
-* Continuous treatments (20 minutes):
-    * Explaining the problem of handling continuous treatments
-    * How standard, bivariate plots of treatment and effect can fail us
-    * How to conceptualize counterfactuals in the context of continuous treatments
-    * How to interpret the causal curve in words
-    
-* Notebook 3 exercises: Causal curve exercise (20 minutes)
+* Break (15 min)
+
+* Overview of `DoWhy` framework (20 minutes)
+    * Core workflow: Model, Identify, Estimate, Refute 
+    * Metalearning and causal root cause analysis
+
+* Notebook 3 exercises: Exploring DoWhy (20 minutes)
+
+* Explain bonus exercise notebook 4: Bayesian structural time series
 
 * Closing remarks (15 minutes)
     * How to troubleshoot common issues in causal inference analyses. 
     * Returning to the basic causal inference assumptions we discussed before, with a final warning about them. 
-    * Providing links to other causal ML packages worth exploring (e.g. DoWhy, causalML, etc.)
     * General Q&A and Wrap Up
 
 __Total time required: 240 minutes__
@@ -107,6 +108,6 @@ __Total time required: 240 minutes__
 
 The only technical requirements for this tutorial are having a local machine with an internet connection, a common web browser (e.g. Firefox, Safari, Chrome, etc.), and Google account (for accessing Colab and Google Slides).
 
-All exercise notebooks (both "student" and "teacher" versions) are available on Google Colab. Notebooks have been thoroughly tested and can run end-to-end in the provided environments. See links below.
+All exercise notebooks (both "student" and "teacher" versions) are available on local Marimo notebooks. Notebooks have been thoroughly tested and can run end-to-end in the provided environments. See links below. 
 
-The notebooks uses datasets which are publicly available in [this GitHub repo](https://github.com/ronikobrosly/misc_dataset). Don't worry, though, the Colab notebooks directly link to them and you don't have to do anything beyond run the Colab notebook code as is. In case you want to play with the datasets locally (beyond the tutorial notebooks), they are conveniently included in this tutorial repo in the `data` folder.   
+The notebooks uses datasets which are publicly available in [this GitHub repo](https://github.com/ronikobrosly/misc_dataset). Don't worry, though, the Colab notebooks directly link to them and you don't have to do anything beyond run the Colab notebook code as is.    
