@@ -11,6 +11,7 @@ fonts:
   sans: 'Inter, sans-serif'
   mono: 'Fira Code, monospace'
   fallbacks: false
+highlighter: shiki
 ---
 
 <style>
@@ -68,7 +69,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Default header sizes for all slides (slightly smaller) */
 h1 {
-  font-size: 2.5rem !important;
+  font-size: 2rem !important;
   line-height: 1.2 !important;
   margin-bottom: 2rem !important;
   color: #000d9c;
@@ -484,7 +485,7 @@ layout: two-cols
 ---
 
 
-# Causal Inference Questions
+# Causal Inference <br> Questions
 
 - • How does improving neighborhood income inequality **reduce** neighborhood crime rate?
 - • How does **increasing or decreasing** the price of a product impact demand?
@@ -493,7 +494,7 @@ layout: two-cols
 
 ::right::
 
-# Standard ML Questions
+# Standard ML <br> Questions
 <br>
 
 - • Can I **cluster** neighborhoods by their characteristics?
@@ -540,7 +541,7 @@ class: text-center
 
 # Exercise Time! 🎯
 
-Let's practice drawing causal graphs
+Let's practice creating causal graphs
 
 ---
 layout: two-cols
@@ -557,7 +558,7 @@ layout: two-cols
 - Vehicle year
 
 :: right :: 
-<br><br><br><br><br>
+<br><br><br>
 - Car safety rating
 - Accident history
 - Age
@@ -633,7 +634,7 @@ graph LR
 **Tourism demand** is a confounder:
 - • It increases AirBnB presence
 - • It increases house prices
-- • Creates a spurious association between AirBnB and prices
+- • Creates a modifies any true relationship between AirBnB and prices
 
 </div>
 
@@ -662,6 +663,30 @@ Confounder biases association **towards the zero**
 ---
 
 # Classic Example: Ice Cream & Crime
+
+<div class="text-center mt-8">
+Do ice cream sales cause violent crime? 🍦 → 🔫
+</div> <br>
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#fff9c4','primaryTextColor':'#f57f17','primaryBorderColor':'#f9a825','lineColor':'#42a5f5','secondaryColor':'#e3f2fd','tertiaryColor':'#f3e5f5','fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
+graph TD
+
+    IC["<div style='text-align:center;font-family:Fira Code,monospace'>Ice Cream<br/>Sales</div>"]:::treatment
+    VC["<div style='text-align:center;font-family:Fira Code,monospace'>Violent<br/>Crime</div>"]:::outcome
+
+    IC --> VC
+
+    classDef treatment fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
+    classDef outcome fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c,rx:15,ry:15
+
+    linkStyle 0 stroke:#42a5f5,stroke-width:2.5px
+    
+
+```
+---
+
+# Not what it seems
 
 <div class="text-center mt-8">
 Do ice cream sales cause violent crime? 🍦 → 🔫
@@ -695,16 +720,21 @@ After controlling for season/weather, the ice cream-crime association disappears
 
 <div class="mt-8">
 
-### How do we "control" for things?
+**How do we "control" for things?**
+<br><br>
 
-**Option 1: Stratification (simple/naive way)**
+**Option 1**: Stratification (simple/naive way)
 - • Filter your dataset so the confounder only takes on 1 value
-- • Example: `p(lung problems = 1 | smoker = 0)`
+- • Example: `p(violent_crime = 1 | hot_weather = 0)`
 
-**Option 2: Use a model!**
+<br>
+
+**Option 2**: Use a model!
 - • We'll go deep on this in the second half of the tutorial
 
 </div>
+
+
 
 ---
 
@@ -728,21 +758,43 @@ graph LR
     linkStyle 0,1,2 stroke:#42a5f5,stroke-width:2.5px
 ```
 
+
+---
+
+# How Experiments Break Confounding
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#fff9c4','primaryTextColor':'#f57f17','primaryBorderColor':'#f9a825','lineColor':'#42a5f5','secondaryColor':'#e3f2fd','tertiaryColor':'#f3e5f5','fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
+graph LR
+    SES["<div style='text-align:center;font-family:Fira Code,monospace'>Socioeconomic<br/>Status</div>"]:::confounder
+    CS["<div style='text-align:center;font-family:Fira Code,monospace'>Classroom<br/>Size</div>"]:::treatment
+    SP["<div style='text-align:center;font-family:Fira Code,monospace'>Student<br/>Performance</div>"]:::outcome
+
+    SES --> SP
+    CS --> SP
+
+    classDef confounder fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#f57f17,rx:15,ry:15
+    classDef treatment fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
+    classDef outcome fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c,rx:15,ry:15
+
+    linkStyle 0,1 stroke:#42a5f5,stroke-width:2.5px
+```
+
 <div class="mt-8">
 
-In experiments, **randomization breaks** the association between confounders and treatment!
-
-The randomization ensures classroom size is independent of socioeconomic status.
+In experiments, **randomization breaks** the association between confounders and treatment! The randomization ensures classroom size is independent of socioeconomic status.
 
 </div>
 
 ---
 
-# Key Insight
+# Circling back to experiments vs causal inference
 
 <div class="text-center mt-8">
 
 **Experiments** are wonderful because randomization breaks all confounding
+
+<br><br>
 
 **Causal inference** is when we take non-experimental (observational) data and carefully try to pick apart the confounding ourselves
 
@@ -803,8 +855,6 @@ graph LR
 
 If you control for lung cancer (the collider), you'll create a spurious association between smoking and sick days taken!
 
-This is called **collider bias** or **selection bias**
-
 </div>
 
 ---
@@ -830,8 +880,7 @@ graph LR
 <div class="mt-8">
 
 **Key points:**
-- • Controlling for a mediator will **nullify** associations of interest
-- • There are statistical tests of mediation you can use
+- • Controlling for a mediator will **nullify** any relationship between treatment and outcome
 - • Helps determine causal pathways in observational data
 
 </div>
@@ -858,9 +907,7 @@ graph LR
 
 <div class="mt-8">
 
-If you control for rideshare requests (the mediator), you'll eliminate the effect of rain on profit!
-
-The requests ARE the mechanism by which rain affects profit.
+If you control for rideshare requests (the mediator), you'll eliminate the effect of rain on profit! The requests ARE the mechanism by which rain affects profit.
 
 </div>
 
@@ -868,9 +915,10 @@ The requests ARE the mechanism by which rain affects profit.
 
 # Putting It All Together
 
+<br>
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
-graph TD
+graph LR
     CF["<div style='text-align:center;font-family:Fira Code,monospace'>Confounder</div>"]:::confounder
     T["<div style='text-align:center;font-family:Fira Code,monospace'>Treatment</div>"]:::treatment
     O["<div style='text-align:center;font-family:Fira Code,monospace'>Outcome</div>"]:::outcome
@@ -901,29 +949,47 @@ graph TD
 
 ---
 
-# Reality is Complicated!
+# Reality is Complicated! Real-world causal graphs can be extremely complex.
 
-<div class="text-center">
 
-Real-world causal graphs can be extremely complex
-
-</div>
-
-<div class="text-xs text-gray-500 mt-8">
-Hamra GB et al., "Model Averaging for Improving Inference from Causal Diagrams", 2015
-</div>
+<img src="./imgs/complicated_dag.png" style="width:60%; height:auto;" class="center-img">
 
 ---
 layout: center
 class: text-center
 ---
 
-# Notebook Exercise #1
-
-### Causal Graphs
+# Notebook Exercise #1: <br> Causal Graphs
 
 Time to practice! 🚀
 
+
+---
+layout: center
+---
+
+<div style="transform: scale(0.7); transform-origin: center;">
+
+```python
+from causalgraphicalmodels.csm import StructuralCausalModel, linear_model, logistic_model
+
+confounding_example = StructuralCausalModel({
+    "temperature": lambda n_samples: np.random.normal(loc = 23, scale = 3, size=n_samples),
+    "price": linear_model(parents = ["temperature"], weights = [2], noise_scale = 5),
+    "bookings": linear_model(parents = ["price", "temperature"], weights = [-1, 5], noise_scale = 5),
+
+ce_cgm = confounding_example.cgm
+ce_cgm.draw()
+
+data = confounding_example.sample(n_samples=10000)
+})
+```
+
+</div>
+
+
+---
+layout: center
 ---
 
 # Important Asides
@@ -932,13 +998,9 @@ Time to practice! 🚀
 
 # Avoid Automated Causal Discovery
 
-<div class="mt-8">
+<div style="display: flex; gap: 2rem; margin-top: 2rem;">
 
-**Markov Equivalence Classes**
-
-These three graphs are indistinguishable with observational data:
-
-</div>
+<div style="flex: 1;">
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
@@ -952,6 +1014,8 @@ graph LR
     classDef node fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
     linkStyle default stroke:#42a5f5,stroke-width:2.5px
 ```
+
+<br>
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
@@ -967,6 +1031,8 @@ graph LR
     linkStyle default stroke:#42a5f5,stroke-width:2.5px
 ```
 
+<br>
+
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
 graph LR
@@ -981,11 +1047,14 @@ graph LR
     linkStyle default stroke:#42a5f5,stroke-width:2.5px
 ```
 
----
+</div>
 
-# Avoid Automated Causal Discovery (cont.)
+<div style="flex: 1.2; display: flex; align-items: center;">
+<div style="border-left: 5px solid #1976d2; padding-left: 2rem;">
 
-<div class="mt-8">
+**These three graphs belong to the same "Markov Equivalence Class" and are indistinguishable with observational data!**
+
+<div style="margin-top: 2rem;">
 
 ❌ Don't rely on automated causal graph structure learning algorithms
 
@@ -993,150 +1062,67 @@ graph LR
 
 </div>
 
-<div class="mt-8">
-Understanding your domain and the data-generating process is crucial for building accurate causal models.
+</div>
 </div>
 
+</div>
+
+---
+layout: center
 ---
 
 # LLMs and Causality
 
-<div class="mt-8">
+<img src="./imgs/bengio_abstract.png" style="width:60%; height:auto;" class="center-img">
 
-**Research Question:** Can Large Language Models Infer Causation from Correlation?
 
-**Authors:** Zhijing Jin et al. (2024)
-
-**Key Finding:** Current LLMs struggle with pure causal inference tasks, even though they may have seen causal facts in their training data.
-
-</div>
-
-<div class="text-xs text-gray-500 mt-8">
-Jin et al., Max Planck Institute, ETH Zürich, University of Michigan, Meta AI
-</div>
 
 ---
-
-# LLMs and Causality: The Task
-
-<div class="grid grid-cols-2 gap-8">
-
-<div>
-
-**Training Corpus Contains:**
-- • "Smoking causes cancer" ✓ Clear causal fact
-- • "Upon the release of vaccines, disease cases reached a historical high"
-
-**New Task: Corr2Cause Inference**
-- • Suppose A correlates with B. Can we infer A causes B?
-- • A correlates with C. B correlates with C. However, A is independent of B. Can we infer A and B have a common effect?
-
-</div>
-
-<div>
-
-**Previous Tasks:**
-- • "Alice slipped, so she fell down" → Plausible
-
-**Skill tested in previous work:**
-Empirical knowledge, not pure causal inference
-
-**This requires:**
-Inferring causation from correlation
-
-</div>
-
-</div>
-
+layout: center
 ---
 
-# LLMs and Causality: Performance
+# LLMs and Causality
 
-<div class="text-sm">
+<img src="./imgs/bengio_results.png" style="width:90%; height:auto;" class="center-img">
 
-| Model | F1 | Accuracy |
-|-------|-----|----------|
-| **Random Baselines** | | |
-| Always Majority | 0.0 | 84.77 |
-| Random (Uniform) | 20.38 | 62.78 |
-| **BERT-Based Models** | | |
-| BART MNLI | 33.38 | 78.50 |
-| **LLaMa-Based Models** | | |
-| Alpaca-6.7B | 27.37 | 21.33 |
-| **GPT-Based Models** | | |
-| GPT-3 Davinci | 27.82 | 31.61 |
-| GPT-3.5 | 21.69 | 69.46 |
-| GPT-4 | **29.08** | 64.60 |
 
-</div>
-
-<div class="text-center mt-8">
-**Even GPT-4 struggles with pure causal inference from correlational statements!**
-</div>
 
 ---
-
-# LLMs and Causality: Fine-tuning Helps
-
-<div class="text-sm">
-
-| Model | F1 (Original) | F1 (Finetuned) | Improvement |
-|-------|---------------|----------------|-------------|
-| GPT-3 Ada | 0.0 | 79.85 | ✓ |
-| GPT-3 Davinci | 27.82 | **85.52** | ✓ |
-| BERT-Large | - | 85.26 | ✓ |
-| RoBERTa-Large | - | 89.10 | ✓ |
-| RoBERTa-Large MNLI | - | **94.74** | ✓ |
-
-</div>
-
-<div class="mt-8">
-Fine-tuning dramatically improves performance, but models still struggle with:
-- • Paraphrased statements
-- • Variable refactorization
-</div>
-
+layout: two-cols
 ---
 
-# Variable Importance ≠ Causality
 
-<div class="text-center mt-8">
+# ⚠️ Traditional variable importance methods don't tell you anything about causality!
 
-**⚠️ Traditional variable importance methods don't tell you anything about causality!**
-
-</div>
 
 <div class="mt-8">
 
-**Examples of non-causal importance measures:**
-- • SHAP values
-- • Feature importances from Random Forests
-- • Correlation coefficients
-- • Regression coefficients (without proper causal adjustment)
+<br>
 
-**These tools are useful for prediction, but not for causal inference!**
-
+These tools are useful for prediction, but not for causal inference!
 </div>
 
+:: right ::
+
+<br>
+<br>
+<br>
+<img src="./imgs/shap.png" style="width:100%; height:auto;" class="center-img">
+
+
 ---
-
-# Transitioning to Causal Modeling
-
-<div class="mt-8">
+layout: center
+---
 
 We've discussed three types of causal relationships.
 
 Going forward, we're going to assume you identified key **confounders** you want to control for, as you estimate the causal impact between a **"treatment"** and an **"outcome"**...
 
-</div>
 
 ---
 
 # If You Are Doing Causal Modeling...
 
-<div class="mt-8">
-
-**Best Practices:**
 
 1. **Think before looking at data** - Carefully consider quantities of interest and their relationships using domain knowledge
 
@@ -1148,7 +1134,6 @@ Going forward, we're going to assume you identified key **confounders** you want
 
 4. **Identify potential confounders** - Clearly identify covariates to control for and those NOT to control for
 
-</div>
 
 ---
 

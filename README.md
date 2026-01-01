@@ -1,5 +1,9 @@
-# (IN PROGRESS) Proposed SciPY 2026 Tutorial: Introduction to Causal Inference
+# Proposed SciPY 2026 Tutorial: Introduction to Causal Inference
 
+## Abstract
+
+
+## Requirements and Setup
 
 Then attendees can just run:
 ```bash
