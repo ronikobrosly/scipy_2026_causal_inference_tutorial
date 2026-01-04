@@ -34,7 +34,7 @@ def _(mo):
 
 @app.cell
 def _():
-    # Fix the Python 3.10+ compatibility issue by monkey-patching collections
+    # Fix the Python <= 3.10 compatibility issue by monkey-patching collections
     # This must happen before importing causalgraphicalmodels
     import collections
     import collections.abc

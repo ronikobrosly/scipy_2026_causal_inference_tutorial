@@ -11,7 +11,7 @@ app = marimo.App()
 @app.cell
 def _():
     import subprocess
-    return (subprocess,)
+    return
 
 
 @app.cell(hide_code=True)
@@ -25,26 +25,18 @@ def _(mo):
 
 
 @app.cell
-def _(subprocess):
-    # First, we'll need to install the relevant packages
-    #! apt-get install graphviz
-    subprocess.call(['apt-get', 'install', 'graphviz'])
-    # packages added via marimo's package management: causalgraphicalmodels matplotlib numpy scipy !pip install causalgraphicalmodels matplotlib numpy scipy
-    return
+def _():
+    # Fix the Python <= 3.10 compatibility issue by monkey-patching collections
+    # This must happen before importing causalgraphicalmodels
+    import collections
+    import collections.abc
 
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    The `causalgraphicalmodels` package is really useful when you're learning causal inference concepts, but unfortunately it's been broken since python 3.10.x. Let's fix it in one line. I really should open a PR with this fix...
-    """)
-    return
-
-
-@app.cell
-def _(subprocess):
-    #! sed -i '/from collections import Iterable/c\from collections.abc import Iterable' /usr/local/lib/python3.10/dist-packages/causalgraphicalmodels/cgm.py
-    subprocess.call(['sed', '-i', '/from collections import Iterable/c\\from collections.abc import Iterable', '/usr/local/lib/python3.10/dist-packages/causalgraphicalmodels/cgm.py'])
+    # Add the moved classes back to collections for backwards compatibility
+    collections.Iterable = collections.abc.Iterable
+    collections.Mapping = collections.abc.Mapping
+    collections.MutableMapping = collections.abc.MutableMapping
+    collections.MutableSet = collections.abc.MutableSet
+    collections.Callable = collections.abc.Callable
     return
 
 
@@ -584,4 +576,3 @@ def _():
 
 if __name__ == "__main__":
     app.run()
-

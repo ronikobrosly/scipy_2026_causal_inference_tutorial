@@ -1218,12 +1218,16 @@ Unfortunately we don't have lots of data on the participants so we perform a cau
 </div>
 
 ---
+layout: center
+---
 
 # Metrics for Causal Effects
 
 ---
 
-# Counterfactuals with Binary Treatment
+# Counterfactuals with Binary Treatment (additive)
+
+<br>
 
 <div class="grid grid-cols-2 gap-8 mt-8">
 
@@ -1232,7 +1236,7 @@ Unfortunately we don't have lots of data on the participants so we perform a cau
 ### Observed Reality
 Experiences 500ms delay on website
 
-**Click-through rate: 15%**
+**Click-through rate: 60%**
 
 </div>
 
@@ -1241,14 +1245,47 @@ Experiences 500ms delay on website
 ### Alternative Reality
 Experiences no delay on website
 
-**Click-through rate: 20%**
+**Click-through rate: 65%**
 
 </div>
 
 </div>
 
 <div class="text-center mt-8">
-Average Treatment Effect = 20% - 15% = **+5%**
+Average Treatment Effect = 60% - 65% = -5%
+</div>
+
+---
+
+
+# Counterfactuals with Binary Treatment (ratio)
+
+<br>
+
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div>
+
+### Observed Reality
+Worked with radium for years
+
+**20% probability of developing cancer in the coming year**
+
+</div>
+
+<div>
+
+### Alternative Reality
+Never worked with radium
+
+**15% probability of developing cancer in the coming year**
+
+</div>
+
+</div>
+
+<div class="text-center mt-8">
+Average Treatment Effect = 20% / 15% = 1.3 times higher risk
 </div>
 
 ---
@@ -1292,6 +1329,8 @@ You can apply causal inference to **any unit of analysis**:
 | **CATU** - Conditional ATU | Effect in untreated, segmented by covariate |
 
 ---
+layout: center
+---
 
 # Modeling Approaches for Causal Inference
 
@@ -1299,123 +1338,28 @@ You can apply causal inference to **any unit of analysis**:
 
 # Interrupted Time Series
 
-<div class="mt-8">
-Used when a policy or intervention occurs at a specific time point
-</div>
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
-graph LR
-    subgraph Before
-    T1["<div style='text-align:center;font-family:Fira Code,monospace'>Time 1</div>"]:::timenode
-    T2["<div style='text-align:center;font-family:Fira Code,monospace'>Time 2</div>"]:::timenode
-    T1 --> T2
-    end
-    subgraph After
-    T3["<div style='text-align:center;font-family:Fira Code,monospace'>Time 3</div>"]:::timenode
-    T4["<div style='text-align:center;font-family:Fira Code,monospace'>Time 4</div>"]:::timenode
-    T3 --> T4
-    end
-    T2 --> T3
-
-    classDef timenode fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
-    linkStyle default stroke:#42a5f5,stroke-width:2.5px
-```
-
-<div class="mt-8">
-
-**Key Idea:** Compare the trend before intervention to the trend after intervention
-
-**Example:** Impact of a new law on crime rates
-
-</div>
+<img src="./imgs/interrupted_tis.png" style="width:65%; height:auto;" class="center-img">
 
 ---
 
-# Regression Discontinuity Design
-
-<div class="mt-8">
-Used when treatment assignment is based on a threshold/cutoff
-</div>
-
-<div class="text-center mt-8">
-
-**Example:** Poverty Index cutoff at 58
-
-- • If Poverty Index < 58: Eligible for assistance
-- • If Poverty Index ≥ 58: Not eligible
-
-</div>
-
-<div class="mt-8">
-
-**Key Idea:** Compare outcomes just above and below the threshold
-
-**Assumption:** Units just above/below cutoff are similar except for treatment
-
-</div>
-
----
 
 # Difference in Differences
 
-<div class="mt-8">
-Used when you have pre/post data for both treatment and control groups
-</div>
+<img src="./imgs/diff_in_diff.png" style="width:60%; height:auto;" class="center-img">
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
-graph LR
-    subgraph Pre
-    T1["<div style='text-align:center;font-family:Fira Code,monospace'>Treatment<br/>Group</div>"]:::treatment
-    C1["<div style='text-align:center;font-family:Fira Code,monospace'>Control<br/>Group</div>"]:::control
-    end
-    subgraph Post
-    T2["<div style='text-align:center;font-family:Fira Code,monospace'>Treatment<br/>Group</div>"]:::treatment
-    C2["<div style='text-align:center;font-family:Fira Code,monospace'>Control<br/>Group</div>"]:::control
-    end
-    T1 --> T2
-    C1 --> C2
-
-    classDef treatment fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
-    classDef control fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c,rx:15,ry:15
-    linkStyle default stroke:#42a5f5,stroke-width:2.5px
-```
-
-<div class="mt-8">
-
-**Key Idea:** (Treatment_post - Treatment_pre) - (Control_post - Control_pre)
-
-**Assumption:** Parallel trends - both groups would have changed similarly without treatment
-
+<br>
+<div class="text-center">
+(Treatment_post - Treatment_pre) - (Control_post - Control_pre)
 </div>
 
 ---
 
 # Propensity Score Matching (PSM)
 
-<div class="text-center">
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
-graph LR
-    P["<div style='text-align:center;font-family:Fira Code,monospace'>Population</div>"]:::step
-    D["<div style='text-align:center;font-family:Fira Code,monospace'>Divide by<br/>Treatment</div>"]:::step
-    M["<div style='text-align:center;font-family:Fira Code,monospace'>Match Similar<br/>Units</div>"]:::step
-    C["<div style='text-align:center;font-family:Fira Code,monospace'>Compare<br/>Outcomes</div>"]:::step
+<img src="./imgs/psm.png" style="width:100%; height:auto;" class="center-img">
 
-    P --> D --> M --> C
-
-    classDef step fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
-    linkStyle default stroke:#42a5f5,stroke-width:2.5px
-```
-
-</div>
-
-**Process:**
-1. Calculate probability of receiving treatment for each unit
-2. Match treated units with similar untreated units
-3. Compare outcomes between matched pairs
 
 ---
 
@@ -1487,20 +1431,20 @@ Match based on similar propensity scores!
 | 4   | 0     | 10      |
 
 <div class="text-center mt-8">
-Average Treatment Effect = (20 + 15)/2 - (10 + 10)/2 = **7.5**
+Average Treatment Effect = (20 + 15)/2 - (10 + 10)/2 = 7.5
 </div>
 
 ---
+layout: center
+---
 
-# G-Computation / S-Learner
-
-An ML-based approach to causal inference
+# Meta-learners: S-Learner
 
 **Key idea:** Train a model to predict outcomes, then simulate counterfactuals
 
 ---
 
-# G-Computation Step 1: Train Model
+# S-Learner Step 1: Train model with a set of participants for whom we have complete data
 
 | ID# | Covar 1 | Covar 2 | treat | outcome |
 |-----|---------|---------|-------|---------|
@@ -1512,11 +1456,9 @@ An ML-based approach to causal inference
 
 Train a model: `outcome ~ covariates + treat`
 
-Aim for high recall and precision!
-
 ---
 
-# G-Computation Step 2: Force Treatment = 1
+# S-Learner Step 2: Predict outcome where everyone has treatment = 1
 
 | ID# | Covar 1 | Covar 2 | treat | outcome | **ŷ(treat=1)** |
 |-----|---------|---------|-------|---------|----------------|
@@ -1526,11 +1468,24 @@ Aim for high recall and precision!
 | 4   | ...     | ...     | **1** | 10      | **17.0**       |
 | 5   | ...     | ...     | **1** | 20      | **22.5**       |
 
-Predict outcomes when everyone is treated
 
 ---
 
-# G-Computation Step 3: Force Treatment = 0
+# S-Learner Step 3: Predict outcome where everyone has treatment = 0
+
+| ID# | Covar 1 | Covar 2 | treat | outcome | **ŷ(treat=1)** |
+|-----|---------|---------|-------|---------|----------------|
+| 1   | ...     | ...     | **0** | 20      | **18.5**       |
+| 2   | ...     | ...     | **0** | 15      | **14.0**       |
+| 3   | ...     | ...     | **0** | 10      | **11.5**       |
+| 4   | ...     | ...     | **0** | 10      | **13.0**       |
+| 5   | ...     | ...     | **0** | 20      | **19.5**       |
+
+
+
+---
+
+# S-Learner Step 4: Calculate treatment effect
 
 | ID# | ŷ(treat=1) | **ŷ(treat=0)** | **CATE** |
 |-----|------------|----------------|----------|
@@ -1541,7 +1496,7 @@ Predict outcomes when everyone is treated
 | 5   | 22.5       | **19.5**       | **3.0**  |
 
 <div class="text-center mt-8">
-Average CATE = **3.1**
+Average CATE = 3.1
 </div>
 
 ---
@@ -1551,125 +1506,57 @@ class: text-center
 
 # Notebook Exercise #2
 
-### Implementing G-Computation
+### Implementing S-Learner By Hand
 
 Time to code! 💻
 
 ---
 
-# Continuous Treatments
+# Quick Aside on Continuous Treatments
 
 What if treatment isn't binary?
+<br><br>
+**Examples:** 
 
-**Example:** How does the *amount* of advertising spending affect sales?
+* • How does the *amount* of advertising spending affect sales?
+* • How does an increased wait time of X affect satisfaction?
 
-We need to estimate the **causal dose-response curve**
-
----
-
-# Causal Dose-Response Curves
-
-<div class="text-center">
-
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
-graph LR
-    T["<div style='text-align:center;font-family:Fira Code,monospace'>Treatment<br/>Amount</div>"]:::treatment
-    O["<div style='text-align:center;font-family:Fira Code,monospace'>Outcome</div>"]:::outcome
-    C1["<div style='text-align:center;font-family:Fira Code,monospace'>Covariate 1</div>"]:::covariate
-    C2["<div style='text-align:center;font-family:Fira Code,monospace'>Covariate 2</div>"]:::covariate
-
-    T --> O
-    C1 --> O
-    C2 --> O
-
-    classDef treatment fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
-    classDef outcome fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c,rx:15,ry:15
-    classDef covariate fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#f57f17,rx:15,ry:15
-    linkStyle default stroke:#42a5f5,stroke-width:2.5px
-```
-
-</div>
-
-Instead of just two counterfactuals (treated/untreated), we have infinite counterfactuals along a continuous range!
 
 ---
 
-# Visualizing Dose-Response
+<br>
+<img src="./imgs/causal_curve1.png" style="width:80%; height:auto;" class="center-img">
 
-<div class="text-center mt-8">
 
-**Outcome**
+---
 
-↑
+<br>
+<img src="./imgs/causal_curve2.png" style="width:80%; height:auto;" class="center-img">
 
-|           /
-|         /
-|       /
-|     /
-|   /
-| /
-+----------→ **Treatment**
 
-</div>
+---
 
-The curve shows how outcome changes across different treatment levels
+<br>
+<img src="./imgs/causal_curve3.png" style="width:80%; height:auto;" class="center-img">
+
+
+---
+
+<br>
+<img src="./imgs/causal_curve4.png" style="width:80%; height:auto;" class="center-img">
+
+
+
 
 ---
 layout: center
-class: text-center
 ---
 
-# Notebook Exercise #3
+# A demo on `DoWhy` and `BSTS`
 
-### Dose-Response Curve Estimation
-
-Let's estimate causal curves! 📈
 
 ---
-
-# A Simple Causal Inference Flowchart
-
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
-graph TD
-    A["<div style='text-align:center;font-family:Fira Code,monospace'>Treatment Variable<br/>Type?</div>"]:::question
-    B["<div style='text-align:center;font-family:Fira Code,monospace'>Binary</div>"]:::decision
-    C["<div style='text-align:center;font-family:Fira Code,monospace'>Continuous</div>"]:::decision
-    D["<div style='text-align:center;font-family:Fira Code,monospace'>Nominal/Ordinal</div>"]:::decision
-
-    E["<div style='text-align:center;font-family:Fira Code,monospace'>Use scikit-learn<br/>for G-computation</div>"]:::action
-    F["<div style='text-align:center;font-family:Fira Code,monospace'>Use causal-curve<br/>package</div>"]:::action
-    G["<div style='text-align:center;font-family:Fira Code,monospace'>Split into binary<br/>comparisons</div>"]:::action
-
-    H["<div style='text-align:center;font-family:Fira Code,monospace'>Outcome Type?</div>"]:::question
-    I["<div style='text-align:center;font-family:Fira Code,monospace'>Continuous:<br/>Calculate ATE</div>"]:::result
-    J["<div style='text-align:center;font-family:Fira Code,monospace'>Binary:<br/>Calculate probability<br/>differences</div>"]:::result
-
-    K["<div style='text-align:center;font-family:Fira Code,monospace'>Outcome Type?</div>"]:::question
-    L["<div style='text-align:center;font-family:Fira Code,monospace'>Continuous:<br/>GPS_Regressor</div>"]:::result
-    M["<div style='text-align:center;font-family:Fira Code,monospace'>Binary:<br/>GPS_Classifier</div>"]:::result
-
-    A --> B
-    A --> C
-    A --> D
-    B --> E
-    C --> F
-    D --> G
-    E --> H
-    H --> I
-    H --> J
-    F --> K
-    K --> L
-    K --> M
-
-    classDef question fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#f57f17,rx:15,ry:15
-    classDef decision fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
-    classDef action fill:#c8e6c9,stroke:#4caf50,stroke-width:3px,color:#2e7d32,rx:15,ry:15
-    classDef result fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c,rx:15,ry:15
-    linkStyle default stroke:#42a5f5,stroke-width:2.5px
-```
-
+layout: center
 ---
 
 # Closing Thoughts
@@ -1682,10 +1569,8 @@ graph TD
 
 Running many statistical tests inflates your false positive rate!
 
-**Solutions:**
-- • Use p-value correction (Bonferroni, FDR)
-- • Pre-register your hypotheses
-- • Be transparent about exploratory vs. confirmatory analyses
+<br>
+<img src="./imgs/pitfalls.png" style="width:80%; height:auto;" class="center-img">
 
 </div>
 
@@ -1697,7 +1582,9 @@ Running many statistical tests inflates your false positive rate!
 
 It's likely your research or business idea doesn't work!
 
-That's okay - **null results are still valuable results**
+<br>
+<img src="./imgs/wont_work.png" style="width:70%; height:auto;" class="center-img">
+
 
 </div>
 
