@@ -27,3 +27,7 @@ SciPy 2026 tutorial on causal inference. Marimo notebooks + Slidev slides.
 - Never modify `_teacher.py` files unless explicitly asked
 - Python environment via `uv` (see `pyproject.toml`) — use `uv run ...` for Python commands
 - Slidev project is in `slides/Introduction to Causal Inference/`
+
+## Important notes
+
+- Never patch code within the `.venv/` folder. Update cell code or update libraries versions instead.

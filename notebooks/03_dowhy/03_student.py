@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.18.4"
+__generated_with = "0.23.9"
 app = marimo.App()
 
 
@@ -22,15 +22,22 @@ def _(mo):
 
 @app.cell
 def _():
-    # Import necessary libraries
+    # Some important imports
+
+    from dowhy import CausalModel
+    import marimo as mo
+    import matplotlib.pyplot as plt
+    import networkx as nx
     import numpy as np
     import pandas as pd
-    import matplotlib.pyplot as plt
-    from dowhy import CausalModel
     import warnings
     warnings.filterwarnings('ignore')
 
-    return CausalModel, np, pd, plt, warnings
+    # Compatibility shim: networkx 3.x renamed d_separated -> is_d_separator,
+    # but dowhy still calls the old name
+    nx.algorithms.d_separated = nx.algorithms.is_d_separator
+
+    return CausalModel, mo, np, pd, plt, warnings
 
 
 @app.cell(hide_code=True)
@@ -332,9 +339,10 @@ def _(mo):
 
 
 @app.cell
-def _(estimate_lr, model):
+def _(estimate_lr, identified_estimand, model):
     # Refute by adding a random common cause
     refute_random = model.refute_estimate(
+        identified_estimand,
         estimate_lr,
         method_name=_____
     )
@@ -362,9 +370,10 @@ def _(mo):
 
 
 @app.cell
-def _(estimate_lr, model):
+def _(estimate_lr, identified_estimand, model):
     # Refute using placebo treatment
     refute_placebo = model.refute_estimate(
+        identified_estimand,
         _____,
         method_name="placebo_treatment_refuter",
         placebo_type=_____
@@ -393,9 +402,10 @@ def _(mo):
 
 
 @app.cell
-def _(estimate_lr, model):
+def _(estimate_lr, identified_estimand, model):
     # Refute using data subset
     refute_subset = model.refute_estimate(
+        identified_estimand,
         estimate_lr,
         method_name=_____,
         subset_fraction=_____
@@ -491,12 +501,6 @@ def _(mo):
     - Be humble about causal inference - it's powerful but relies on untestable assumptions
     """)
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":

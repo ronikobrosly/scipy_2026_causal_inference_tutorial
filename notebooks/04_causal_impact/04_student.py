@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.18.4"
+__generated_with = "0.23.9"
 app = marimo.App()
 
 
@@ -23,15 +23,22 @@ def _(mo):
 
 @app.cell
 def _():
-    # Import necessary libraries
-    import numpy as np
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from causalimpact import fit_causalimpact
+    # Some important imports
+
     import warnings
     warnings.filterwarnings('ignore')
 
-    return fit_causalimpact, np, pd, plt, warnings
+    import os
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
+    from causalimpact import fit_causalimpact, summary, plot
+    import marimo as mo
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+
+    return fit_causalimpact, mo, np, pd, plt, plot, summary, warnings
 
 
 @app.cell(hide_code=True)
@@ -226,14 +233,14 @@ def _(mo):
 
 
 @app.cell
-def _(data, fit_causalimpact, post_period, pre_period):
+def _(data, fit_causalimpact, post_period, pre_period, summary):
     # Fit the CausalImpact model
     # The first column is the treated series (us_sales)
     # The remaining columns are control series
     impact = fit_causalimpact(data, pre_period, post_period)
 
     # Display summary
-    print(impact.summary())
+    print(summary(impact))
     return (impact,)
 
 
@@ -274,9 +281,9 @@ def _(mo):
 
 
 @app.cell
-def _(impact):
+def _(impact, plot):
     # Plot the results
-    impact.plot()
+    plot(impact)
     return
 
 
@@ -448,14 +455,14 @@ def _(mo):
 
 @app.cell
 def _(impact):
-    # Access the inferences DataFrame
-    inferences = impact.inferences
+    # Access the series DataFrame
+    inferences = impact.series
 
     # This contains columns like:
-    # - 'actual': observed values
-    # - 'preds': predicted counterfactual values
-    # - 'preds_lower', 'preds_upper': credible interval bounds
-    # - 'point_effects': pointwise causal effects
+    # - 'observed': observed values
+    # - 'posterior_mean': predicted counterfactual values
+    # - 'posterior_lower', 'posterior_upper': credible interval bounds
+    # - 'point_effects_mean': pointwise causal effects
     # - 'point_effects_lower', 'point_effects_upper': effect credible intervals
 
     print("Available columns:", inferences.columns.tolist())
@@ -521,12 +528,6 @@ def _(mo):
     Thinking through these questions will help you apply CausalImpact to real problems!
     """)
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":

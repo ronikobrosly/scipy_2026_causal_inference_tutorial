@@ -15,6 +15,7 @@ dependencies = [
     "scipy>=1.16.3",
     "tensorflow>=2.18.0",
     "tensorflow-probability>=0.25.0",
+    "tf-keras>=2.18.0",
     "tfp-causalimpact>=0.1.2",
 ]
 
