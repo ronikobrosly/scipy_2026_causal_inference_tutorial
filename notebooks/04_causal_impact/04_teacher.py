@@ -1,15 +1,3 @@
-# /// script
-# dependencies = [
-#     "causalimpact",
-#     "marimo",
-#     "matplotlib",
-#     "numpy",
-#     "pandas",
-#     "tensorflow",
-#     "tensorflow-probability",
-# ]
-# ///
-
 import marimo
 
 __generated_with = "0.18.4"

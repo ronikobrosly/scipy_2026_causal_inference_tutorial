@@ -1,13 +1,23 @@
 # SciPy 2026 Tutorial: Introduction to Causal Inference
 
-A hands-on tutorial introducing causal inference concepts and practical implementation using Python. This tutorial covers causal graphs, estimation methods, the DoWhy framework, and time-series causal impact analysis.
+A hands-on tutorial for SciPy 2026 that introduces causal inference concepts and gives attendees a practical implementation using Python. This tutorial covers causal graphs, estimation methods, the DoWhy framework, and time-series causal impact analysis.
+
+This README provides instructions on how to setup the tutorial environment and slides (for Debian Linux, Mac OSX, and Windows).
+
+The included `Makefile` contains all of the commands necessary to setup and run notebooks and slides.
+
+```bash
+# View all available commands
+make help
+```
+
 
 ## Prerequisites
 
 ### Knowledge Requirements
 - Familiarity with Python data science stack (NumPy, Pandas, Matplotlib)
 - Basic understanding of classic machine learning concepts
-- No prior causal inference experience required
+- **No prior causal inference experience required** 
 
 ### System Requirements
 
@@ -59,8 +69,13 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 
 ### 2. Verify Dependencies
 
+Check that all required system dependencies are installed with correct versions:
+
 ```bash
-# Check versions
+# Automatic check (recommended)
+make check-deps
+
+# Or verify manually:
 python3 --version   # Should be 3.12+
 uv --version
 node --version      # Should be v20+

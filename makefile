@@ -32,14 +32,16 @@ setup-slides: ## Install Node dependencies for Slidev
 
 setup-all: check-deps setup ## Check system deps and run full setup
 
-check-deps: ## Check if required system dependencies are installed
+check-deps: ## Check if required system dependencies are installed (presence + version)
 	@echo "$(BLUE)Checking system dependencies...$(NC)"
 	@command -v python3 >/dev/null 2>&1 || { echo "$(RED)Python 3 is not installed$(NC)"; exit 1; }
+	@python3 -c "import sys; sys.exit(0 if sys.version_info >= (3,12) else 1)" 2>/dev/null || { echo "$(RED)Python 3.12+ is required$(NC)"; exit 1; }
 	@command -v uv >/dev/null 2>&1 || { echo "$(RED)uv is not installed. Install with: curl -LsSf https://astral.sh/uv/install.sh | sh$(NC)"; exit 1; }
 	@command -v node >/dev/null 2>&1 || { echo "$(RED)Node.js is not installed$(NC)"; exit 1; }
+	@node -e "process.exit(Number(process.versions.node.split('.')[0]) < 20 ? 1 : 0)" 2>/dev/null || { echo "$(RED)Node.js 20+ is required$(NC)"; exit 1; }
 	@command -v npm >/dev/null 2>&1 || { echo "$(RED)npm is not installed$(NC)"; exit 1; }
 	@command -v dot >/dev/null 2>&1 || { echo "$(YELLOW)Warning: graphviz (dot) is not installed. Some notebooks may not work correctly.$(NC)"; }
-	@echo "$(GREEN)All required dependencies found.$(NC)"
+	@echo "$(GREEN)All required dependencies found with correct versions.$(NC)"
 
 #------------------------------------------------------------------------------
 # Slides targets

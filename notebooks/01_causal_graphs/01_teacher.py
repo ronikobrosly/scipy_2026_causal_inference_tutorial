@@ -1,16 +1,6 @@
-# /// script
-# dependencies = [
-#     "causalgraphicalmodels",
-#  "marimo",
-#  "matplotlib",
-#  "numpy",
-#  "scipy",
-# ]
-# ///
-
 import marimo
 
-__generated_with = "0.18.4"
+__generated_with = "0.23.9"
 app = marimo.App()
 
 
@@ -24,27 +14,8 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    The `causalgraphicalmodels` package is really useful when you're learning causal inference concepts, but unfortunately it's been broken since python 3.10.x. Let's fix it in one line. I really should open a PR with this fix...
-    """)
-    return
-
-
 @app.cell
 def _():
-    # Fix the Python <= 3.10 compatibility issue by monkey-patching collections
-    # This must happen before importing causalgraphicalmodels
-    import collections
-    import collections.abc
-
-    # Add the moved classes back to collections for backwards compatibility
-    collections.Iterable = collections.abc.Iterable
-    collections.Mapping = collections.abc.Mapping
-    collections.MutableMapping = collections.abc.MutableMapping
-    collections.MutableSet = collections.abc.MutableSet
-    collections.Callable = collections.abc.Callable
     return
 
 
@@ -52,20 +23,15 @@ def _():
 def _():
     # Some important imports
 
-    from causalgraphicalmodels.csm import StructuralCausalModel, linear_model, logistic_model
+    from dowhy import gcm
+    import marimo as mo
     import matplotlib.pyplot as plt
+    import networkx as nx
     import numpy as np
-    from scipy.stats import norm, pearsonr
+    import pandas as pd
+    from scipy.stats import pearsonr
 
-    # '%matplotlib inline' command supported automatically in marimo
-    return (
-        StructuralCausalModel,
-        linear_model,
-        logistic_model,
-        np,
-        pearsonr,
-        plt,
-    )
+    return mo, np, nx, pd, pearsonr, plt
 
 
 @app.function
@@ -103,22 +69,27 @@ def _(mo):
 
 
 @app.cell
-def _(StructuralCausalModel, linear_model, np):
-    # Our toy confounding model. Using the `causalgraphicalmodels` API, we can create toy relationships between treatment, confounder, and outcome.
+def _(nx, plt):
+    # Our toy confounding model. Using networkx to define the DAG and numpy to simulate the causal relationships.
 
-    confounding_example = StructuralCausalModel({
-        "temperature": lambda n_samples: np.random.normal(loc = 23, scale = 3, size=n_samples),
-        "price": linear_model(parents = ["temperature"], weights = [2], noise_scale = 5),
-        "bookings": linear_model(parents = ["price", "temperature"], weights = [-1, 5], noise_scale = 5),
-    })
-    return (confounding_example,)
+    # Define the causal DAG
+    confounding_graph = nx.DiGraph([
+        ("temperature", "price"),
+        ("temperature", "bookings"),
+        ("price", "bookings")
+    ])
 
-
-@app.cell
-def _(confounding_example):
     # Let's draw a causal DAG to represent these relationships
-    ce_cgm = confounding_example.cgm
-    ce_cgm.draw()
+    plt.rcParams['figure.figsize'] = (8, 6)
+    nx.draw_networkx(confounding_graph,
+                     nx.spring_layout(confounding_graph, seed=42),
+                     with_labels=True,
+                     node_color='lightblue', node_size=3000,
+                     font_size=12, font_weight='bold',
+                     arrows=True, arrowsize=20)
+    plt.title("Causal DAG: Confounding Example")
+    plt.axis('off')
+    plt.show()
     return
 
 
@@ -131,8 +102,20 @@ def _(mo):
 
 
 @app.cell
-def _(confounding_example):
-    data = confounding_example.sample(n_samples=100000)
+def _(np, pd):
+    # Generate data according to the causal structure
+
+    np.random.seed(42)
+
+    temperature = np.random.normal(loc=23, scale=3, size=100000)
+    price = 2 * temperature + np.random.normal(0, 5, size=100000)
+    bookings = -0.25 * price + 5 * temperature + np.random.normal(0, 5, size=100000)
+
+    data = pd.DataFrame({
+        "temperature": temperature,
+        "price": price,
+        "bookings": bookings
+    })
 
     # Let's round these columns to make them seem more real
     data["temperature"] = data["temperature"].round(1)
@@ -205,7 +188,7 @@ def _(data):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    After we do this, the association between coffee and lung cancer risk vanishes entirely!
+    After we do this, the association between pricing and bookings flips and weakens!
     """)
     return
 
@@ -256,32 +239,54 @@ def _(mo):
 
 
 @app.cell
-def _(StructuralCausalModel, linear_model, logistic_model, np):
+def _(np, nx, pd, plt):
     # Let's set up our variables and causal relationships for this example
-    collider_example = StructuralCausalModel({
-        "number_rated_items": lambda n_samples: np.random.normal(loc=30, scale=5, size=n_samples),
-        "number_purchases": linear_model(parents = ["number_rated_items"], weights = [1], noise_scale = 5),
-        "some_unrelated_variable": lambda n_samples: np.random.normal(loc=100, scale=20, size=n_samples),
-        "number_emails": logistic_model(parents = ["number_rated_items", "number_purchases", "some_unrelated_variable"], weights = [1.2,1.5,-1])
 
+    # Define the causal DAG
+    collider_graph = nx.DiGraph([
+        ("number_rated_items", "number_purchases"),
+        ("number_rated_items", "number_emails"),
+        ("number_purchases", "number_emails"),
+        ("some_unrelated_variable", "number_emails")
+    ])
+
+    # Draw the DAG
+    plt.rcParams['figure.figsize'] = (8, 6)
+    nx.draw_networkx(collider_graph,
+                     nx.spring_layout(collider_graph, seed=123),
+                     with_labels=True,
+                     node_color='lightblue', node_size=3000,
+                     font_size=10, font_weight='bold',
+                     arrows=True, arrowsize=20)
+    plt.title("Causal DAG: Collider Example")
+    plt.axis('off')
+    plt.show()
+
+    # Generate data according to the causal structure
+
+    np.random.seed(123)
+
+    number_rated_items = np.random.normal(loc=30, scale=5, size=10000)
+    number_purchases = 1.5 * number_rated_items + np.random.normal(0, 5, size=10000)
+    some_unrelated_variable = np.random.normal(loc=100, scale=20, size=10000)
+    number_emails = 2.2 * number_rated_items + 1.5 * number_purchases - 0.2 * some_unrelated_variable #+ np.random.normal(0, 1, size=10000)
+
+    data_1 = pd.DataFrame({
+        "number_rated_items": number_rated_items,
+        "number_purchases": number_purchases,
+        "some_unrelated_variable": some_unrelated_variable,
+        "number_emails": number_emails
     })
-    return (collider_example,)
 
-
-@app.cell
-def _(collider_example):
-    ce_cgm_1 = collider_example.cgm
-    ce_cgm_1.draw()
-    return
-
-
-@app.cell
-def _(collider_example):
-    data_1 = collider_example.sample(n_samples=10000)
     data_1 = data_1.astype(int)
-    # Let's round these columns to make them seem more real
     data_1.head()
     return (data_1,)
+
+
+@app.cell
+def _(data_1):
+    data_1['some_unrelated_variable'].mean()
+    return
 
 
 @app.cell(hide_code=True)
@@ -339,7 +344,7 @@ def _(mo):
 
 @app.cell
 def _(data_1):
-    data2_1 = data_1[data_1['number_emails'] == 1]
+    data2_1 = data_1[data_1['number_emails'] == 99]
     return (data2_1,)
 
 
@@ -360,7 +365,7 @@ def _(data2_1, pearsonr):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    As you can see, the correlation has been attenuated! The slopes are different, as you can see below:
+    As you can see, the correlation has been attenuated and flipped! The slopes are different, as you can see below:
     """)
     return
 
@@ -405,27 +410,49 @@ def _(mo):
     mo.md(r"""
     ### <b>EXERCISE</b>
 
-    <b> Create a toy model demonstrating the causal relationship of "mediation". Look to the prior examples to see how to use the `causalgraphicalmodels` API.
+    <b> Create a toy model demonstrating the causal relationship of "mediation". Define the DAG using networkx and generate data using numpy, following the patterns from the earlier examples.
     </b>
     """)
     return
 
 
 @app.cell
-def _(StructuralCausalModel, linear_model, np):
-    mediator_example = StructuralCausalModel({
-        "advertise": lambda n_samples: np.random.normal(loc=30, scale=5, size=n_samples),
-        "subscribers": linear_model(parents = ["advertise"], weights = [0.75], noise_scale = 5),
-        "rides": linear_model(parents = ["subscribers"], weights = [0.75], noise_scale = 5)
+def _(np, nx, pd, plt):
+    # Define the mediator causal DAG
+    mediator_graph = nx.DiGraph([
+        ("advertise", "subscribers"),
+        ("subscribers", "rides")
+    ])
+
+    # Draw the DAG
+    plt.rcParams['figure.figsize'] = (8, 6)
+    nx.draw_networkx(mediator_graph,
+                     nx.spring_layout(mediator_graph, seed=100),
+                     with_labels=True,
+                     node_color='lightblue', node_size=3000,
+                     font_size=12, font_weight='bold',
+                     arrows=True, arrowsize=20)
+    plt.title("Causal DAG: Mediator Example")
+    plt.axis('off')
+    plt.show()
+
+    # Generate data according to the causal structure
+
+    np.random.seed(99)
+
+    advertise = np.random.normal(loc=30, scale=5, size=100000)
+    subscribers = 0.75 * advertise + np.random.normal(0, 5, size=100000)
+    rides = 0.75 * subscribers + np.random.normal(0, 5, size=100000)
+
+    data_2 = pd.DataFrame({
+        "advertise": advertise,
+        "subscribers": subscribers,
+        "rides": rides
     })
-    return (mediator_example,)
 
-
-@app.cell
-def _(mediator_example):
-    me_cgm = mediator_example.cgm
-    me_cgm.draw()
-    return
+    data_2 = data_2.astype(int)
+    data_2.head()
+    return (data_2,)
 
 
 @app.cell(hide_code=True)
@@ -437,14 +464,6 @@ def _(mo):
     </b>
     """)
     return
-
-
-@app.cell
-def _(mediator_example):
-    data_2 = mediator_example.sample(n_samples=100000)
-    data_2 = data_2.astype(int)
-    data_2.head()
-    return (data_2,)
 
 
 @app.cell
@@ -534,23 +553,31 @@ def _(mo):
 
 
 @app.cell
-def _(StructuralCausalModel, linear_model, logistic_model, np):
+def _(nx, plt):
     # Let's set up our variables and causal relationships for this example
-    complex_example = StructuralCausalModel({
-        "A": lambda n_samples: np.random.normal(loc=30, scale=5, size=n_samples),
-        "B": lambda n_samples: np.random.normal(loc=100, scale=20, size=n_samples),
-        "C": lambda n_samples: np.random.binomial(1, p=0.30, size=n_samples),
-        "D": linear_model(parents = ["B", "C"], weights = [2, 0.5], noise_scale = 5),
-        "E": linear_model(parents = ["A", "D"], weights = [1, 2.2], noise_scale = 5),
-        "F": logistic_model(parents = ["A", "E", "D"], weights = [1.2,1.5,-1])
-    })
-    return (complex_example,)
 
+    # Define the complex causal DAG
+    complex_graph = nx.DiGraph([
+        ("B", "D"),
+        ("C", "D"),
+        ("A", "E"),
+        ("D", "E"),
+        ("A", "F"),
+        ("E", "F"),
+        ("D", "F")
+    ])
 
-@app.cell
-def _(complex_example):
-    graph_obj = complex_example.cgm
-    graph_obj.draw()
+    # Draw the DAG
+    plt.rcParams['figure.figsize'] = (8, 6)
+    nx.draw_networkx(complex_graph,
+                     nx.spring_layout(complex_graph, seed=3),
+                     with_labels=True,
+                     node_color='lightblue', node_size=3000,
+                     font_size=14, font_weight='bold',
+                     arrows=True, arrowsize=20)
+    plt.title("Causal DAG: Complex Example")
+    plt.axis('off')
+    plt.show()
     return
 
 
@@ -576,18 +603,16 @@ def _(mo):
 
 
 @app.cell
-def _(StructuralCausalModel, linear_model, np):
-    # Let's set up our variables and causal relationships for this example
-    complex_example_1 = StructuralCausalModel({'B': lambda n_samples: np.random.normal(loc=100, scale=20, size=n_samples), 'C': lambda n_samples: np.random.binomial(1, p=0.3, size=n_samples), 'D': linear_model(parents=['B', 'C'], weights=[2, 0.5], noise_scale=5)})
-    data_3 = complex_example_1.sample(n_samples=100000)
+def _(np, pd):
+    # Let's generate data for the C->D->E subgraph to verify
+    np.random.seed(456)
+    B = np.random.normal(loc=100, scale=20, size=100000)
+    C = np.random.binomial(1, p=0.3, size=100000)
+    D = 2 * B + 0.5 * C + np.random.normal(0, 5, size=100000)
+
+    data_3 = pd.DataFrame({"B": B, "C": C, "D": D})
     data_3.head()
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":

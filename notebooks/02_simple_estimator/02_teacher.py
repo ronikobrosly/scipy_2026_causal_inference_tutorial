@@ -1,7 +1,3 @@
-# /// script
-# dependencies = ["matplotlib", "pandas", "sklearn", "pydot"]
-# ///
-
 import marimo
 
 __generated_with = "0.18.4"

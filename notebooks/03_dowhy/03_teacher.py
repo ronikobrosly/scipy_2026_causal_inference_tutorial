@@ -1,14 +1,3 @@
-# /// script
-# dependencies = [
-#     "dowhy",
-#     "marimo",
-#     "matplotlib",
-#     "numpy",
-#     "pandas",
-#     "scikit-learn",
-# ]
-# ///
-
 import marimo
 
 __generated_with = "0.18.4"
