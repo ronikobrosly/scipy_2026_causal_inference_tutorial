@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.18.4"
+__generated_with = "0.23.9"
 app = marimo.App()
 
 
@@ -11,11 +11,6 @@ def _(mo):
 
     In this notebook we'll work through some basic examples of causal relationships, in the form of causal graphs.
     """)
-    return
-
-
-@app.cell
-def _():
     return
 
 
@@ -90,7 +85,7 @@ def _(nx, plt):
     plt.title("Causal DAG: Confounding Example")
     plt.axis('off')
     plt.show()
-    return confounding_graph
+    return
 
 
 @app.cell(hide_code=True)
@@ -422,7 +417,7 @@ def _(mo):
 
 
 @app.cell
-def _(np, nx, pd, plt):
+def _(__________, np, nx, pd, plt):
     # EXERCISE: Fill in the DAG definition below
     mediator_graph = nx.DiGraph([
         __________,
@@ -457,7 +452,7 @@ def _(np, nx, pd, plt):
 
     data_2 = data_2.astype(int)
     data_2.head()
-    return data_2, mediator_graph
+    return
 
 
 @app.cell(hide_code=True)
@@ -562,7 +557,7 @@ def _(mo):
 
 
 @app.cell
-def _(np, nx, plt):
+def _(nx, plt):
     # Let's set up our variables and causal relationships for this example
 
     # Define the complex causal DAG

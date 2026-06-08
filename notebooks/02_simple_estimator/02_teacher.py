@@ -1,13 +1,7 @@
 import marimo
 
-__generated_with = "0.18.4"
+__generated_with = "0.23.9"
 app = marimo.App()
-
-
-@app.cell
-def _():
-    import subprocess
-    return (subprocess,)
 
 
 @app.cell(hide_code=True)
@@ -19,31 +13,24 @@ def _(mo):
 
 
 @app.cell
-def _(subprocess):
-    #! apt-get install graphviz
-    subprocess.call(['apt-get', 'install', 'graphviz'])
-    # packages added via marimo's package management: matplotlib pandas sklearn pydot !pip install matplotlib pandas sklearn pydot
-    return
-
-
-@app.cell
 def _():
+    # Some important imports
+
     from graphviz import Digraph
+    import marimo as mo
     import matplotlib.pyplot as plt
     import pandas as pd
+    from sklearn.ensemble import GradientBoostingClassifier
     from sklearn.metrics import classification_report
     from sklearn.model_selection import train_test_split
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.ensemble import GradientBoostingClassifier
-    from sklearn.neighbors import NearestNeighbors
     from sklearn.preprocessing import StandardScaler
 
-    # '%matplotlib inline' command supported automatically in marimo
     return (
         Digraph,
         GradientBoostingClassifier,
         StandardScaler,
         classification_report,
+        mo,
         pd,
         train_test_split,
     )
@@ -346,7 +333,7 @@ def _(mo):
 
 @app.cell
 def _(df2, features_1, model):
-    df_treat_1 = df2[df2['int_plan_yes'] == 1]
+    df_treat_1 = df2[df2['int_plan_yes'] == 1].copy()
     df_treat_1['int_plan_yes'] = 1
     treat_churn_prob_1 = model.predict_proba(df_treat_1[features_1])[:, 1].mean()
     print(f'Mean probability of churning in this hypothetical treatment population is {round(treat_churn_prob_1, 3)}')
@@ -355,17 +342,11 @@ def _(df2, features_1, model):
 
 @app.cell
 def _(df2, features_1, model):
-    df_ctrl_1 = df2[df2['int_plan_yes'] == 1]
+    df_ctrl_1 = df2[df2['int_plan_yes'] == 1].copy()
     df_ctrl_1['int_plan_yes'] = 0
     ctrl_churn_prob_1 = model.predict_proba(df_ctrl_1[features_1])[:, 1].mean()
     print(f'Mean probability of churning in this hypothetical treatment population is {round(ctrl_churn_prob_1, 3)}')
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":

@@ -16,11 +16,6 @@ def _(mo):
 
 @app.cell
 def _():
-    return
-
-
-@app.cell
-def _():
     # Some important imports
 
     from dowhy import gcm
