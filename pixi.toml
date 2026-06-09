@@ -1,0 +1,54 @@
+[project]
+name = "scipy-2026-causal-inference-tutorial"
+version = "1.0.0"
+description = "SciPy 2026 tutorial on causal inference with Marimo notebooks and Slidev slides"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64"]
+
+[tasks]
+check-deps = "pixi list"
+
+setup-slides = { cmd = "npm install", cwd = "slides/Introduction to Causal Inference" }
+
+# Student notebooks
+notebook-1 = "marimo edit notebooks/01_causal_graphs/01_student.py"
+notebook-2 = "marimo edit notebooks/02_simple_estimator/02_student.py"
+notebook-3 = "marimo edit notebooks/03_dowhy/03_student.py"
+notebook-4 = "marimo edit notebooks/04_causal_impact/04_student.py"
+
+# Teacher notebooks (solutions)
+teacher-1 = "marimo edit notebooks/01_causal_graphs/01_teacher.py"
+teacher-2 = "marimo edit notebooks/02_simple_estimator/02_teacher.py"
+teacher-3 = "marimo edit notebooks/03_dowhy/03_teacher.py"
+teacher-4 = "marimo edit notebooks/04_causal_impact/04_teacher.py"
+
+# Slides
+run-slides = { cmd = "npm run dev", cwd = "slides/Introduction to Causal Inference" }
+build-slides = { cmd = "npm run build", cwd = "slides/Introduction to Causal Inference" }
+export-slides = { cmd = "npm run export", cwd = "slides/Introduction to Causal Inference" }
+
+# Development
+format = "ruff format . && ruff check --fix ."
+lint = "ruff check ."
+clean = "rm -rf \"slides/Introduction to Causal Inference/dist\" .ruff_cache && find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true"
+
+[dependencies]
+python = ">=3.12"
+nodejs = ">=20"
+graphviz = ">=12"
+
+[pypi-dependencies]
+dowhy = ">=0.11"
+marimo = ">=0.23.9"
+matplotlib = ">=3.10.8"
+numpy = ">=1.0,<2.0"
+pandas = ">=2.3.3"
+pydot = ">=4.0.1"
+scikit-learn = ">=1.8.0"
+scipy = ">=1.16.3"
+tensorflow = ">=2.18.0"
+tensorflow-probability = ">=0.25.0"
+tf-keras = ">=2.18.0"
+tfp-causalimpact = ">=0.1.2"
+black = ">=25.12.0"
+ruff = ">=0.14.10"

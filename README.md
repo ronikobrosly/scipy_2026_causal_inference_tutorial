@@ -25,6 +25,7 @@ make help
 |------------|---------|---------|
 | Python | 3.12+ | Runtime for notebooks |
 | uv | Latest | Python package manager |
+| **or pixi** | **Latest** | **All-in-one package manager (alternative)** |
 | Node.js | 20+ | Slidev presentation |
 | npm | Latest | Node package manager |
 | Graphviz | Latest | Graph visualization |
@@ -98,6 +99,63 @@ make setup-python   # Python dependencies only
 make setup-slides   # Slidev dependencies only
 ```
 
+### Pixi Setup (Alternative to the makefile)
+
+[Pixi](https://pixi.sh/) is an all-in-one package manager built on conda that handles Python, system libraries (Graphviz), and Node.js in a single environment. With pixi, you can skip installing uv, Node.js, and Graphviz separately — pixi manages everything.
+
+**Install pixi:**
+
+```bash
+# macOS/Linux
+curl -fsSL https://pixi.sh/install.sh | bash
+
+# Windows (PowerShell)
+iwr -useb https://pixi.sh/install.ps1 | iex
+
+# Or via Homebrew
+brew install pixi
+```
+
+**Clone and set up:**
+
+```bash
+git clone https://github.com/your-org/scipy_2026_causal_inference_tutorial.git
+cd scipy_2026_causal_inference_tutorial
+
+# Install all Python + system dependencies in one command
+pixi install
+
+# Install Slidev (Node.js) dependencies
+pixi run setup-slides
+```
+
+**Quick start with pixi:**
+
+```bash
+# List all available tasks
+pixi task list
+
+# Start the first notebook
+pixi run notebook-1
+
+# View the slides
+pixi run run-slides
+```
+
+| Pixi Command | Purpose |
+|-------------|---------|
+| `pixi install` | Install all Python + system dependencies |
+| `pixi run setup-slides` | Install Slidev (Node.js) dependencies |
+| `pixi run notebook-1` through `pixi run notebook-4` | Run student notebooks |
+| `pixi run teacher-1` through `pixi run teacher-4` | Run teacher (solution) notebooks |
+| `pixi run run-slides` | Start Slidev dev server |
+| `pixi run build-slides` | Build slides for production |
+| `pixi run export-slides` | Export slides to PDF |
+| `pixi run format` | Format code (ruff) |
+| `pixi run lint` | Lint code (ruff) |
+| `pixi run clean` | Clean build artifacts |
+| `pixi shell` | Open a shell in the pixi environment |
+
 ## Quick Start
 
 ```bash
@@ -170,7 +228,8 @@ scipy_2026_causal_inference_tutorial/
 │       └── imgs/               # Slide images
 ├── data/
 │   └── causal_churn.csv        # Sample dataset
-├── makefile                    # Build automation
+├── makefile                    # Build automation (uv-based)
+├── pixi.toml                   # Build automation (pixi-based)
 ├── pyproject.toml              # Python dependencies
 └── README.md                   # This file
 ```
