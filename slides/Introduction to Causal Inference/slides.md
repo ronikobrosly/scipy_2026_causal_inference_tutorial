@@ -198,7 +198,7 @@ By the end of this tutorial, you should be able to:
 layout: center
 ---
 
-<div class="flex justify-center items-center h-screen">
+<div class="flex justify-center items-center h-full">
 <div id="vacationer-plot"></div>
 </div>
 
@@ -925,8 +925,8 @@ graph LR
     M["<div style='text-align:center;font-family:Fira Code,monospace'>Mediator</div>"]:::mediator
     CL["<div style='text-align:center;font-family:Fira Code,monospace'>Collider</div>"]:::collider
 
-    CF --> T
     CF --> O
+    CF --> T
     T --> M
     M --> O
     T --> CL
@@ -971,18 +971,20 @@ layout: center
 <div style="transform: scale(0.7); transform-origin: center;">
 
 ```python
-from causalgraphicalmodels.csm import StructuralCausalModel, linear_model, logistic_model
+temperature = np.random.normal(loc=23, scale=3, size=100000)
+price = 2 * temperature + np.random.normal(0, 5, size=100000)
+bookings = -0.25 * price + 5 * temperature + np.random.normal(0, 5, size=100000)
 
-confounding_example = StructuralCausalModel({
-    "temperature": lambda n_samples: np.random.normal(loc = 23, scale = 3, size=n_samples),
-    "price": linear_model(parents = ["temperature"], weights = [2], noise_scale = 5),
-    "bookings": linear_model(parents = ["price", "temperature"], weights = [-1, 5], noise_scale = 5),
-
-ce_cgm = confounding_example.cgm
-ce_cgm.draw()
-
-data = confounding_example.sample(n_samples=10000)
+data = pd.DataFrame({
+    "temperature": temperature,
+    "price": price,
+    "bookings": bookings
 })
+
+# Let's round these columns to make them seem more real
+data["temperature"] = data["temperature"].round(1)
+data["price"] = data["price"].round(2)
+data["bookings"] = data["bookings"].astype(int)
 ```
 
 </div>
@@ -1252,7 +1254,7 @@ Experiences no delay on website
 </div>
 
 <div class="text-center mt-8">
-Average Treatment Effect = 60% - 65% = -5%
+Average Treatment Effect = 60% - 65% = 5% drop
 </div>
 
 ---
@@ -1552,8 +1554,499 @@ What if treatment isn't binary?
 layout: center
 ---
 
-# A demo on `DoWhy` and `BSTS`
+# A brief tour of `DoWhy` and `tfp-causalimpact`
 
+---
+
+# What is DoWhy?
+
+**DoWhy** is a Python library for causal inference that provides a unified interface and emphasizes making causal assumptions **explicit**.
+
+<div class="mt-8">
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e3f2fd','primaryTextColor':'#0d47a1','primaryBorderColor':'#1976d2','lineColor':'#42a5f5','secondaryColor':'#fff3e0','tertiaryColor':'#f3e5f5','fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
+graph LR
+    S1["<div style='text-align:center;font-family:Fira Code,monospace'>1. Model</div>"]:::step
+    S2["<div style='text-align:center;font-family:Fira Code,monospace'>2. Identify</div>"]:::step
+    S3["<div style='text-align:center;font-family:Fira Code,monospace'>3. Estimate</div>"]:::step
+    S4["<div style='text-align:center;font-family:Fira Code,monospace'>4. Refute</div>"]:::step
+
+    S1 --> S2 --> S3 --> S4
+
+    classDef step fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
+    linkStyle default stroke:#42a5f5,stroke-width:3px
+```
+
+</div>
+
+---
+
+# DoWhy Scenario: Workplace Wellness Program
+
+<div class="mt-4">
+
+Your company launched a voluntary wellness program. **Does participation actually improve employee health?**
+
+| Variable | Description |
+|----------|-------------|
+| `wellness_program` | 1 if employee participated, 0 otherwise |
+| `health_score_change` | Health score change over 6 months |
+| `age` | Employee age in years |
+| `initial_health` | Initial health score (0-100) |
+| `job_stress` | Job stress level (1-10) |
+| `tenure` | Years at the company |
+
+</div>
+
+---
+layout: two-cols
+---
+
+# Step 1: Model (Make assumptions explicit with a causal graph)
+
+
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
+graph LR
+    A[Age]:::conf
+    IH[Initial<br/>Health]:::conf
+    JS[Job<br/>Stress]:::conf
+    WP[Wellness<br/>Program]:::treat
+    HC[Health Score<br/>Change]:::out
+
+    A --> WP
+    A --> HC
+    IH --> WP
+    IH --> HC
+    JS --> WP
+    JS --> HC
+    WP --> HC
+
+    classDef conf fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#f57f17,rx:15,ry:15
+    classDef treat fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
+    classDef out fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c,rx:15,ry:15
+
+    linkStyle default stroke:#42a5f5,stroke-width:2.5px
+```
+
+::right::
+
+<div class="mt-16">
+
+**Confounders we identified:**
+
+<br>
+
+- • **Age** — affects who joins the program AND health outcomes
+- • **Initial Health** — healthier people more likely to join AND to improve
+- • **Job Stress** — high-stress employees less likely to join AND improve less
+
+<br>
+
+</div>
+
+---
+
+# DoWhy CausalModel API
+
+In DoWhy, you specify the graph and let it handle the rest:
+
+```python
+from dowhy import CausalModel
+
+causal_graph = """
+digraph {
+    age -> wellness_program;  age -> health_score_change;
+    initial_health -> wellness_program;
+    initial_health -> health_score_change;
+    job_stress -> wellness_program;
+    job_stress -> health_score_change;
+    wellness_program -> health_score_change;
+}
+"""
+
+model = CausalModel(
+    data=data,
+    treatment='wellness_program',
+    outcome='health_score_change',
+    graph=causal_graph
+)
+```
+
+<v-click>
+
+<div class="mt-6 text-center">
+
+The causation graph is the **single most important input**. Spend time getting it right!
+
+</div>
+
+</v-click>
+
+---
+
+# Step 2: Identify — Graph-Based Criteria
+
+<style>
+.smaller-text p, .smaller-text div, .smaller-text li {
+  font-size: 1.1rem !important;
+}
+</style>
+
+```python
+identified_estimand = model.identify_effect(
+    proceed_when_unidentifiable=True
+)
+print(identified_estimand)
+```
+
+<div class="mt-4 smaller-text">
+
+<div style="border-left: 4px solid #1976d2; padding-left: 1.5rem; margin-top: 0.5rem;">
+
+**Estimand Expression:**
+
+$$\frac{d}{d[\text{wellness\_program}]}E[\text{health\_score\_change} \;|\; \textbf{age}, \textbf{initial\_health}, \textbf{job\_stress}]$$
+
+</div>
+
+<div class="mt-2">
+This means: to get the causal effect, adjust for age, initial_health, and job_stress — matches the DAG!
+</div>
+
+</div>
+
+---
+
+# Step 3: Estimate — Multiple Methods Available
+
+```python
+# Linear regression (backdoor adjustment)
+estimate_lr = model.estimate_effect(
+    identified_estimand,
+    method_name="backdoor.linear_regression",
+    test_significance=True
+)
+```
+
+<div class="mt-4">
+
+**There are many built-in estimation methods available**
+
+</div>
+
+---
+
+# Step 3: Comparing Estimates
+
+<div class="mt-4">
+
+For our wellness program (true effect = **5.0**):
+
+| Method | Estimated Effect |
+|--------|-----------------|
+| Linear Regression | ~5.0 |
+| Propensity Score Matching | ~5.0 |
+| Propensity Score Stratification | ~5.0 |
+
+</div>
+
+<br>
+
+Try multiple methods — if estimates agree, you have more confidence in your results!
+
+---
+
+# Step 4: Refute — Test Your Estimate's Robustness
+
+**This is where DoWhy really shines!** Refutation tests check whether your causal assumptions hold by stress-testing the estimate:
+
+<br>
+
+```python
+# Add a random confounder — the estimate should stay stable
+model.refute_estimate(estimand, estimate,
+    method_name="random_common_cause")
+```
+<br>
+If your estimate survives these tests, you can be more confident it's not driven by unobserved confounding or spurious correlation.
+
+---
+
+# DoWhy vs. Manual Approach (Notebook 2)
+
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div>
+
+### Notebook 2 (Manual)
+- Manually specified confounders
+- Built predictive model by hand
+- Made counterfactual predictions
+- **No formal validation framework**
+
+</div>
+
+<div>
+
+### Notebook 3 (DoWhy)
+- Causal graph makes assumptions **explicit & visual**
+- Identification uses **formal graph theory**
+- Multiple estimation methods with **consistent interface**
+- **Refutation tests** validate assumptions
+
+</div>
+
+</div>
+
+<div class="mt-8 text-center">
+
+DoWhy doesn't replace domain knowledge — you still need the right causal graph. But it provides a **principled framework** for the entire workflow.
+
+</div>
+
+---
+
+# DoWhy: Key Takeaways
+
+- • The **causal graph** is critical — spend time thinking through it with domain experts
+- • DoWhy's **4-step framework** (Model → Identify → Estimate → Refute) formalizes best practices
+- • Try **multiple estimation methods** to check robustness of results
+- • **Always run refutation tests** before making strong causal claims
+- • If refutations fail, your assumptions are likely wrong — revisit the DAG
+- • Be humble: causal inference is powerful but rests on **untestable assumptions**
+
+---
+
+# What is tfp-causalimpact?
+
+**tfp-causalimpact** is a Python package for **time series causal inference** using Bayesian structural time series models.
+
+<div class="mt-8">
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e3f2fd','primaryTextColor':'#0d47a1','primaryBorderColor':'#1976d2','lineColor':'#42a5f5','secondaryColor':'#fff3e0','tertiaryColor':'#f3e5f5','fontFamily':'Fira Code, monospace'}, 'flowchart': {'htmlLabels': true, 'useMaxWidth': true}}}%%
+graph LR
+    C["<div style='text-align:center;font-family:Fira Code,monospace'>Control<br/>Time Series</div>"]:::control
+    P["<div style='text-align:center;font-family:Fira Code,monospace'>Predicted<br/>Counterfactual</div>"]:::pred
+    A["<div style='text-align:center;font-family:Fira Code,monospace'>Actual<br/>(Treated)</div>"]:::actual
+    I["<div style='text-align:center;font-family:Fira Code,monospace'>Causal<br/>Impact</div>"]:::impact
+
+    C --> P
+    A --> I
+    P --> I
+
+    classDef control fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1,rx:15,ry:15
+    classDef pred fill:#c8e6c9,stroke:#4caf50,stroke-width:3px,color:#2e7d32,rx:15,ry:15
+    classDef actual fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c,rx:15,ry:15
+    classDef impact fill:#ffccbc,stroke:#ff5722,stroke-width:3px,color:#d84315,rx:15,ry:15
+
+    linkStyle default stroke:#42a5f5,stroke-width:2.5px
+```
+
+</div>
+
+<div class="mt-8 text-center">
+
+**Key idea:** Use control time series to predict what *would have happened* without the intervention. The difference between prediction and reality is the causal impact.
+
+</div>
+
+---
+
+# When to Use CausalImpact
+
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div>
+
+### ✅ Ideal When
+- You have **time series data** (measurements over time)
+- There's a **clear intervention point**
+- You have **control series** unaffected by the intervention
+- You **can't run an experiment** (intervention already happened)
+
+</div>
+
+<div>
+
+### ❌ Not Suitable When
+- Cross-sectional data (no time dimension)
+- No control series available
+- The intervention affected the controls too
+- Intervention timing is unclear
+
+</div>
+
+</div>
+
+<div class="mt-8">
+
+**Common use cases:** Marketing campaigns, policy changes, product feature launches, pricing changes, regional interventions
+
+</div>
+
+---
+
+# CausalImpact Scenario: E-commerce Campaign
+
+<div class="mt-4">
+
+Your company launched an email campaign on June 1 for US customers. **Did it increase daily sales?**
+
+| Series | Role | Description |
+|--------|------|-------------|
+| `us_sales` | **Treated** | Daily US sales (received campaign) |
+| `canada_sales` | Control | Daily Canada sales (no campaign) |
+| `uk_sales` | Control | Daily UK sales (no campaign) |
+| `traffic` | Control | Daily website traffic |
+
+<br>
+
+<div class="text-center">
+
+**The core assumption:** control series help predict what US sales *would have been* without the campaign.
+
+</div>
+
+</div>
+
+---
+
+# Defining Pre and Post Periods
+
+```python
+from causalimpact import fit_causalimpact
+
+# 90 days of data, campaign starts day 61
+pre_period  = [data.index[0],  data.index[59]]   # Days 1–60
+post_period = [data.index[60], data.index[89]]   # Days 61–90
+```
+
+<div class="mt-8">
+
+| Phase | Duration | Purpose |
+|-------|----------|---------|
+| **Pre-period** | Before intervention | Learn relationship between treated & control series |
+| **Post-period** | After intervention | Measure the causal effect |
+
+</div>
+
+---
+
+# Fitting the Model
+
+```python
+# Data: first column = treated, remaining = controls
+impact = fit_causalimpact(data, pre_period, post_period)
+
+print(summary(impact))
+```
+
+<div class="mt-4">
+
+**The model uses a Bayesian structural time series approach** that captures:
+
+- • **Trends** — gradual changes over time
+- • **Seasonality** — recurring patterns (weekly, monthly, etc.)
+- • **Covariate relationships** — how control series predict the treated series
+
+It learns these patterns from the pre-period, then predicts the counterfactual for the post-period.
+
+</div>
+
+---
+
+# Interpreting the Summary Output
+
+<div class="mt-4">
+
+```
+Posterior Inference {Causal Impact}
+  Average           Actual     Pred (s.d.)   95% CI
+  --------------------------------------------------
+  Average           3910       3705 (28)     [3652, 3759]
+  Absolute effect    +205       200 (28)     [150, 258]
+  Relative effect   +5.5%        5.4%
+  --------------------------------------------------
+  Posterior tail-area probability p:   0.0003
+  Posterior prob. of causal effect:  99.97%
+```
+
+</div>
+
+<div class="mt-4">
+
+- **Absolute effect ~200**: The campaign boosted daily sales by ~$200
+- **Posterior prob. 99.97%**: Extremely high confidence the effect is real
+- **Tail-area probability p ≈ 0**: Effect is statistically significant
+
+</div>
+
+---
+
+# Visualizing Results
+
+<img src="./imgs/causalimpact_plot_example.png" style="width:75%; height:auto;" class="center-img">
+
+<div class="text-center mt-4">
+
+**Three panels:** Original data (top), Pointwise effect (middle), Cumulative effect (bottom)
+
+</div>
+
+---
+
+# CausalImpact: Important Assumptions
+
+<div class="mt-8">
+
+1. **Controls are unaffected by the intervention**
+   - The treatment must not "spill over" to your control series
+   - Example: if your campaign targeted all of North America, Canada sales aren't a valid control
+
+2. **Stable relationship before and after**
+   - The relationship between treated and control series should be the same pre and post (except for the intervention effect)
+
+3. **Sufficient pre-intervention data**
+   - You need enough data to learn the predictive relationship
+   - A good rule: at least 2-3 cycles of any seasonal pattern
+
+</div>
+
+---
+
+# CausalImpact vs. Other Approaches
+
+<div class="mt-8">
+
+| Method | Data Type | Key Idea |
+|--------|-----------|----------|
+| **Causal Graphs** (Notebook 1) | Cross-sectional | Think through confounding structure |
+| **S-Learner** (Notebook 2) | Cross-sectional | ML model predicts counterfactuals |
+| **DoWhy** (Notebook 3) | Cross-sectional | Formal 4-step framework with refutation |
+| **CausalImpact** (Notebook 4) | **Time series** | Bayesian structural time series with controls |
+
+</div>
+
+<div class="mt-8 text-center">
+
+Each tool has its place — **match the method to your data structure and research question!**
+
+</div>
+
+---
+
+# tfp-causalimpact: Key Takeaways
+
+- • Ideal for **time series interventions** with clear before/after periods
+- • **Control series must not be affected** by the intervention
+- • Bayesian approach gives you **credible intervals** and **posterior probabilities**
+- • The **cumulative effect** tells you total impact, pointwise shows how it evolves
+- • Always **visualize your data** before and after the intervention
+- • **Good control series** are essential — spend time selecting them carefully
 
 ---
 layout: center
@@ -1608,24 +2101,6 @@ class: text-center
 ### Questions?
 
 <div class="mt-8">
-
-**Resources:**
-- • GitHub: [your-repo-link]
-- • Marimo Notebooks: [notebook-links]
-- • Further Reading: Pearl's "The Book of Why"
+https://github.com/ronikobrosly/scipy_2026_causal_inference_tutorial
 
 </div>
-
----
-layout: center
-class: text-center
----
-
-# Let's Practice!
-
-Open the Marimo notebooks and let's get hands-on with causal inference! 🚀
-
-```bash
-cd notebooks
-uv run marimo edit 01_causal_graphs.py
-```
