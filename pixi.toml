@@ -1,9 +1,10 @@
-[project]
+[workspace]
 name = "scipy-2026-causal-inference-tutorial"
 version = "1.0.0"
 description = "SciPy 2026 tutorial on causal inference with Marimo notebooks and Slidev slides"
 channels = ["conda-forge"]
-platforms = ["linux-64", "osx-arm64", "osx-64"]
+# osx-64 (Intel Mac) is omitted: tensorflow>=2.18 ships no Intel-macOS wheels.
+platforms = ["linux-64", "osx-arm64"]
 
 [tasks]
 check-deps = "pixi list"
@@ -33,7 +34,9 @@ lint = "ruff check ."
 clean = "rm -rf \"slides/Introduction to Causal Inference/dist\" .ruff_cache && find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true"
 
 [dependencies]
-python = ">=3.12"
+# Pin to 3.12 so pixi doesn't resolve to 3.14+, for which tensorflow ships no
+# matching wheels (no cp314 tags). This matches the version in .python-version.
+python = ">=3.12,<3.13"
 nodejs = ">=20"
 graphviz = ">=12"
 
@@ -42,7 +45,7 @@ dowhy = ">=0.11"
 marimo = ">=0.23.9"
 matplotlib = ">=3.10.8"
 numpy = ">=1.0,<2.0"
-pandas = ">=2.3.3"
+pandas = ">=2.3.3,<3.0"
 pydot = ">=4.0.1"
 scikit-learn = ">=1.8.0"
 scipy = ">=1.16.3"
