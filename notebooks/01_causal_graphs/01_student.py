@@ -9,7 +9,7 @@ def _(mo):
     mo.md(r"""
     # Notebook 1 - Exploring causal graphs and relationships
 
-    In this notebook we'll work through some basic examples of causal relationships, in the form of causal graphs.
+    In this notebook we'll work through some basic examples of causal relationships, in the form of causal graphs. I recommend using marimo's light mode with this notebook (diagrams render nicer).   
     """)
     return
 
