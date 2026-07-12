@@ -1704,16 +1704,9 @@ print(identified_estimand)
 
 <div class="mt-4 smaller-text">
 
-<div style="border-left: 4px solid #1976d2; padding-left: 1.5rem; margin-top: 0.5rem;">
-
-**Estimand Expression:**
-
-$$\frac{d}{d[\text{wellness\_program}]}E[\text{health\_score\_change} \;|\; \textbf{age}, \textbf{initial\_health}, \textbf{job\_stress}]$$
-
-</div>
 
 <div class="mt-2">
-This means: to get the causal effect, adjust for age, initial_health, and job_stress — matches the DAG!
+To get the causal effect, adjust for age, initial_health, and job_stress — matches the DAG!
 </div>
 
 </div>
@@ -1989,7 +1982,7 @@ Posterior Inference {Causal Impact}
 
 # Visualizing Results
 
-<img src="./imgs/causalimpact_plot_example.png" style="width:75%; height:auto;" class="center-img">
+<img src="./imgs/causalimpact_plot_example.png" style="width:50%; height:auto;" class="center-img">
 
 <div class="text-center mt-4">
 
