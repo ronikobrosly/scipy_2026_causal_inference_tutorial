@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.23.9"
-app = marimo.App()
+app = marimo.App(width="full")
 
 
 @app.cell(hide_code=True)
@@ -36,6 +36,9 @@ def _():
     # Compatibility shim: networkx 3.x renamed d_separated -> is_d_separator,
     # but dowhy still calls the old name
     nx.algorithms.d_separated = nx.algorithms.is_d_separator
+
+    # Render all plots at higher resolution
+    plt.rcParams['figure.dpi'] = 200
 
     return CausalModel, mo, np, pd, plt, warnings
 

@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.23.9"
-app = marimo.App()
+app = marimo.App(width="full")
 
 
 @app.cell(hide_code=True)
@@ -37,6 +37,11 @@ def _():
     import matplotlib.pyplot as plt
     import numpy as np
     import pandas as pd
+
+    # Render all plots at higher resolution
+    plt.rcParams['figure.dpi'] = 200
+    # Use matplotlib's constrained layout to prevent overlapping plot elements
+    plt.rcParams['figure.constrained_layout.use'] = True
 
     return fit_causalimpact, mo, np, pd, plt, plot, summary, warnings
 
@@ -143,7 +148,7 @@ def _(mo):
 
 @app.cell
 def _(data, plt):
-    fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+    fig, axes = plt.subplots(2, 2)
 
     # US sales
     axes[0, 0].plot(data.index, data['us_sales'], color='steelblue', linewidth=2)
@@ -177,7 +182,6 @@ def _(data, plt):
     axes[1, 1].legend()
     axes[1, 1].grid(alpha=0.3)
 
-    plt.tight_layout()
     plt.show()
     return axes, fig
 

@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.23.9"
-app = marimo.App()
+app = marimo.App(width="full")
 
 
 @app.cell(hide_code=True)
@@ -25,6 +25,11 @@ def _():
     import numpy as np
     import pandas as pd
     from scipy.stats import pearsonr
+
+    # Render all plots at higher resolution
+    plt.rcParams['figure.dpi'] = 200
+    # Use matplotlib's constrained layout to prevent overlapping plot elements
+    plt.rcParams['figure.constrained_layout.use'] = True
 
     return mo, np, nx, pd, pearsonr, plt
 
@@ -75,7 +80,6 @@ def _(nx, plt):
     ])
 
     # Let's draw a causal DAG to represent these relationships
-    plt.rcParams['figure.figsize'] = (8, 6)
     nx.draw_networkx(confounding_graph,
                      nx.spring_layout(confounding_graph, seed=42),
                      with_labels=True,
@@ -148,7 +152,6 @@ def _(mo):
 @app.cell
 def _(data, np, plt):
     # Some plot formatting
-    plt.rcParams['figure.figsize'] = (15, 10)
     ax = plt.subplot(111)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
@@ -199,7 +202,6 @@ def _(data2, pearsonr):
 @app.cell
 def _(data2, np, plt):
     # Some plot formatting
-    plt.rcParams['figure.figsize'] = (15, 10)
     ax_1 = plt.subplot(111)
     ax_1.spines['top'].set_visible(False)
     ax_1.spines['right'].set_visible(False)
@@ -225,7 +227,7 @@ def _(mo):
     We're going to be looking into a set of three variables in this context:
     * Number of rated clothing items: When the user initially signs up and throughout their subscription, they can browse through clothes and rate them with a thumbs up and thumbs down to indicate whether they like the item they're viewing. This helps the algorithm improve over time.
     * Number of purchases: This is the total number of items a customer has decided to buy and keep.
-    * The number of emails a customer receives from the company: The company has a policy of sending customers more emails the more they engage with the service. They figure that if you're really engaged with (rating lots of clothes, buying lots of items) then you'll probably love more emails and announcements from them. They think it'll further strengthen a customer's relationship with the brand. In our data, let's make this a binary variable (0 means low number of emails sent, while 1 means a high number of emails sent).
+    * The number of emails a customer receives from the company: The company has a policy of sending customers more emails the more they engage with the service. They figure that if you're really engaged with (rating lots of clothes, buying lots of items) then you'll probably love more emails and announcements from them. They think it'll further strengthen a customer's relationship with the brand. In our data, let's treat this as a count of the number of emails a customer has received.
     * Some unrelated variable: A variable that is related to the number of emails a customer receives that isn't relevant.
 
     In this example, the collider is the "number of emails", since it is caused by both the number of rated items and the number of purchased items. Each row in the dataset we're about to produce corresponds to one customer.
@@ -246,7 +248,6 @@ def _(np, nx, pd, plt):
     ])
 
     # Draw the DAG
-    plt.rcParams['figure.figsize'] = (8, 6)
     nx.draw_networkx(collider_graph,
                      nx.spring_layout(collider_graph, seed=123),
                      with_labels=True,
@@ -303,7 +304,6 @@ def _(data_1, pearsonr):
 @app.cell
 def _(data_1, np, plt):
     # Some plot formatting
-    plt.rcParams['figure.figsize'] = (15, 10)
     ax_2 = plt.subplot(111)
     ax_2.spines['top'].set_visible(False)
     ax_2.spines['right'].set_visible(False)
@@ -368,7 +368,6 @@ def _(mo):
 @app.cell
 def _(data2_1, data_1, np, plt):
     # Some plot formatting
-    plt.rcParams['figure.figsize'] = (15, 10)
     ax_3 = plt.subplot(111)
     ax_3.spines['top'].set_visible(False)
     ax_3.spines['right'].set_visible(False)
@@ -420,7 +419,6 @@ def _(np, nx, pd, plt):
     ])
 
     # Draw the DAG
-    plt.rcParams['figure.figsize'] = (8, 6)
     nx.draw_networkx(mediator_graph,
                      nx.spring_layout(mediator_graph, seed=100),
                      with_labels=True,
@@ -470,7 +468,6 @@ def _(data_2, pearsonr):
 @app.cell
 def _(data_2, np, plt):
     # Some plot formatting
-    plt.rcParams['figure.figsize'] = (15, 10)
     ax_4 = plt.subplot(111)
     ax_4.spines['top'].set_visible(False)
     ax_4.spines['right'].set_visible(False)
@@ -521,7 +518,6 @@ def _(data2_2, pearsonr):
 @app.cell
 def _(data2_2, data_2, np, plt):
     # Some plot formatting
-    plt.rcParams['figure.figsize'] = (15, 10)
     ax_5 = plt.subplot(111)
     ax_5.spines['top'].set_visible(False)
     ax_5.spines['right'].set_visible(False)
@@ -563,7 +559,6 @@ def _(nx, plt):
     ])
 
     # Draw the DAG
-    plt.rcParams['figure.figsize'] = (8, 6)
     nx.draw_networkx(complex_graph,
                      nx.spring_layout(complex_graph, seed=3),
                      with_labels=True,

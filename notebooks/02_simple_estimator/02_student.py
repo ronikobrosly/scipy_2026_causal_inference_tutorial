@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.23.9"
-app = marimo.App()
+app = marimo.App(width="full")
 
 
 @app.cell(hide_code=True)
@@ -24,6 +24,9 @@ def _():
     from sklearn.metrics import classification_report
     from sklearn.model_selection import train_test_split
     from sklearn.preprocessing import StandardScaler
+
+    # Render all plots at higher resolution
+    plt.rcParams['figure.dpi'] = 200
 
     return (
         Digraph,
@@ -195,7 +198,7 @@ def _(GradientBoostingClassifier, features_1, train_df):
 
 @app.cell
 def _(classification_report, features_1, temp_model, test_df):
-    print(classification_report(y_true=temp_model.predict(test_df[features_1]).reshape(-1, 1), y_pred=test_df['churn'].values.reshape(-1, 1)))
+    print(classification_report(y_true=test_df['churn'].values.reshape(-1, 1), y_pred=temp_model.predict(test_df[features_1]).reshape(-1, 1)))
     return
 
 
